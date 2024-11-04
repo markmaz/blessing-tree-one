@@ -3,15 +3,8 @@ import { reactive, onMounted, onUnmounted } from "vue";
 import { useTemplateStore } from "@/stores/template";
 
 // SimpleBar, for more info and examples you can check out https://github.com/Grsmto/simplebar/tree/master/packages/simplebar-vue
-import SimpleBar from "simplebar";
+// import SimpleBar from "simplebar";
 
-// Grab example data
-import activity from "@/data/activity";
-import sales from "@/data/sales";
-import users from "@/data/users";
-
-const salesToday = sales.today;
-const salesYesterday = sales.yesterday;
 
 // Main store
 const store = useTemplateStore();
@@ -39,7 +32,7 @@ function eventSideOverlay(event) {
 
 // Init SimpleBar (custom scrolling) and attach ESCAPE key event listener
 onMounted(() => {
-  new SimpleBar(document.getElementById("side-overlay"));
+  // new SimpleBar(document.getElementById("side-overlay"));
 
   document.addEventListener("keydown", eventSideOverlay);
 });
@@ -148,25 +141,6 @@ onUnmounted(() => {
                     btn-option-content
                   >
                     <ul class="nav-items mb-0">
-                      <li
-                        v-for="(appEvent, index) in activity"
-                        :key="`event-${index}`"
-                      >
-                        <a class="text-dark d-flex py-2" :href="appEvent.href">
-                          <div class="flex-shrink-0 me-3 ms-2">
-                            <i
-                              :class="`${appEvent.icon} text-${appEvent.color}`"
-                            ></i>
-                          </div>
-                          <div class="flex-grow-1 fs-sm">
-                            <div class="fw-semibold">{{ appEvent.title }}</div>
-                            <div>{{ appEvent.subtitle }}</div>
-                            <small class="text-muted">{{
-                              appEvent.time
-                            }}</small>
-                          </div>
-                        </a>
-                      </li>
                     </ul>
                   </BaseBlock>
                   <!-- END Activity -->
@@ -179,29 +153,6 @@ onUnmounted(() => {
                     btn-option-content
                   >
                     <ul class="nav-items mb-0">
-                      <li
-                        v-for="(user, index) in users"
-                        :key="`userlist-${index}`"
-                      >
-                        <a class="d-flex py-2" :href="`${user.href}`">
-                          <div
-                            class="me-3 ms-2 overlay-container overlay-bottom"
-                          >
-                            <img
-                              class="img-avatar img-avatar48"
-                              :src="`/assets/media/avatars/${user.avatar}.jpg`"
-                              alt="User Photo"
-                            />
-                            <span
-                              :class="`overlay-item item item-tiny item-circle border border-2 border-white bg-${user.statusColor}`"
-                            ></span>
-                          </div>
-                          <div class="flex-grow-1 fs-sm">
-                            <div class="fw-semibold">{{ user.name }}</div>
-                            <div class="text-muted">{{ user.profession }}</div>
-                          </div>
-                        </a>
-                      </li>
                     </ul>
                   </BaseBlock>
                   <!-- END Online Friends -->
@@ -342,20 +293,6 @@ onUnmounted(() => {
                     </template>
 
                     <ul class="nav-items mb-0">
-                      <li
-                        v-for="(sale, index) in salesToday"
-                        :key="`sale-today-${index}`"
-                      >
-                        <a class="text-dark d-flex py-2" :href="`${sale.href}`">
-                          <div class="flex-shrink-0 me-3 ms-2">
-                            <i :class="`${sale.icon}`"></i>
-                          </div>
-                          <div class="flex-grow-1 fs-sm">
-                            <div class="fw-semibold">{{ sale.title }}</div>
-                            <small class="text-muted">{{ sale.time }}</small>
-                          </div>
-                        </a>
-                      </li>
                     </ul>
                   </BaseBlock>
                   <!-- END Today -->
@@ -367,20 +304,6 @@ onUnmounted(() => {
                     </template>
 
                     <ul class="nav-items">
-                      <li
-                        v-for="(sale, index) in salesYesterday"
-                        :key="`sale-today-${index}`"
-                      >
-                        <a class="text-dark d-flex py-2" :href="`${sale.href}`">
-                          <div class="flex-shrink-0 me-3 ms-2">
-                            <i :class="`${sale.icon}`"></i>
-                          </div>
-                          <div class="flex-grow-1 fs-sm">
-                            <div class="fw-semibold">{{ sale.title }}</div>
-                            <small class="text-muted">{{ sale.time }}</small>
-                          </div>
-                        </a>
-                      </li>
                     </ul>
                     <div class="text-center">
                       <a
