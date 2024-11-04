@@ -4,9 +4,6 @@ import { useRouter } from "vue-router";
 import { useTemplateStore } from "@/stores/template";
 import {useUserStore} from  "@/stores/userStore";
 
-// Grab example data
-import notifications from "@/data/notifications";
-
 // Main store and Router
 const store = useTemplateStore();
 const router = useRouter();
@@ -134,12 +131,11 @@ onUnmounted(() => {
                     <p class="mb-0 text-muted fs-sm fw-medium">{{ title }}</p>
                   </div>
                   <div class="p-2">
-                    <RouterLink
-                      :to="{ name: 'backend-pages-generic-profile' }"
+                    <span
                       class="dropdown-item d-flex align-items-center justify-content-between"
                     >
                       <span class="fs-sm fw-medium">Profile</span>
-                    </RouterLink>
+                    </span>
                     <a
                       class="dropdown-item d-flex align-items-center justify-content-between"
                       href="javascript:void(0)"
@@ -150,7 +146,7 @@ onUnmounted(() => {
                   <div role="separator" class="dropdown-divider m-0"></div>
                   <div class="p-2">
                     <RouterLink
-                      :to="{ name: 'auth-signin' }"
+                      :to="{ name: 'auth-signin3' }"
                       class="dropdown-item d-flex align-items-center justify-content-between"
                     >
                       <span class="fs-sm fw-medium">Log Out</span>
