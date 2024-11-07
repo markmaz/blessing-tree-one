@@ -1,6 +1,10 @@
 <script setup>
 import { reactive, ref } from "vue";
 import {useUserStore} from  "@/stores/userStore";
+import FamilyWidget from "@/components/FamilyWidget.vue";
+import GiftWidget from "@/components/GIftWidget.vue";
+import SponsorWidget from "@/components/SponsorWidget.vue";
+import SeniorsWidget from "@/components/SeniorsWidget.vue";
 
 // vue-chartjs, for more info and examples you can check out https://vue-chartjs.org/ and http://www.chartjs.org/docs/ -->
 import { Line, Bar } from "vue-chartjs";
@@ -48,132 +52,24 @@ const {login, logout, username, isAuthenticated, name, title} = userStore;
     <!-- Overview -->
     <div class="row items-push">
       <div class="col-sm-6 col-xxl-3">
-        <!-- Pending Orders -->
-        <BaseBlock class="d-flex flex-column h-100 mb-0">
-          <template #content>
-            <div
-              class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center"
-            >
-              <dl class="mb-0">
-                <dt class="fs-3 fw-bold">32</dt>
-                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Families
-                </dd>
-              </dl>
-              <div class="item item-rounded-lg bg-body-light">
-                <i class="fa fa-baby fs-3 text-primary"></i>
-              </div>
-            </div>
-            <div class="bg-body-light rounded-bottom">
-              <a
-                class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between"
-                href="javascript:void(0)"
-              >
-                <span>View all Families</span>
-                <i
-                  class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"
-                ></i>
-              </a>
-            </div>
-          </template>
-        </BaseBlock>
+        <!-- Families -->
+        <family-widget/>
         <!-- END Pending Orders -->
       </div>
       <div class="col-sm-6 col-xxl-3">
         <!-- New Customers -->
-        <BaseBlock class="d-flex flex-column h-100 mb-0">
-          <template #content>
-            <div
-              class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center"
-            >
-              <dl class="mb-0">
-                <dt class="fs-3 fw-bold">124</dt>
-                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Seniors
-                </dd>
-              </dl>
-              <div class="item item-rounded-lg bg-body-light">
-                <i class="fa fa-person-cane fs-3 text-primary"></i>
-              </div>
-            </div>
-            <div class="bg-body-light rounded-bottom">
-              <a
-                class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between"
-                href="javascript:void(0)"
-              >
-                <span>View all Seniors</span>
-                <i
-                  class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"
-                ></i>
-              </a>
-            </div>
-          </template>
-        </BaseBlock>
+        <seniorsWidget/>
         <!-- END New Customers -->
       </div>
       <div class="col-sm-6 col-xxl-3">
-        <!-- Messages -->
-        <BaseBlock class="d-flex flex-column h-100 mb-0">
-          <template #content>
-            <div
-              class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center"
-            >
-              <dl class="mb-0">
-                <dt class="fs-3 fw-bold">45</dt>
-                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Sponsors
-                </dd>
-              </dl>
-              <div class="item item-rounded-lg bg-body-light">
-                <i class="si si-badge fs-3 text-primary"></i>
-              </div>
-            </div>
-            <div class="bg-body-light rounded-bottom">
-              <a
-                class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between"
-                href="javascript:void(0)"
-              >
-                <span>View all Sponsors</span>
-                <i
-                  class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"
-                ></i>
-              </a>
-            </div>
-          </template>
-        </BaseBlock>
-        <!-- END Messages -->
+        <!-- Sponsors -->
+        <SponsorWidget/>
+        <!-- END sponsors -->
       </div>
       <div class="col-sm-6 col-xxl-3">
-        <!-- Conversion Rate -->
-        <BaseBlock class="d-flex flex-column h-100 mb-0">
-          <template #content>
-            <div
-              class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center"
-            >
-              <dl class="mb-0">
-                <dt class="fs-3 fw-bold">99</dt>
-                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Gifts
-                </dd>
-              </dl>
-              <div class="item item-rounded-lg bg-body-light">
-                <i class="fa fa-gift fs-3 text-primary"></i>
-              </div>
-            </div>
-            <div class="bg-body-light rounded-bottom">
-              <a
-                class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between"
-                href="javascript:void(0)"
-              >
-                <span>View all Gifts</span>
-                <i
-                  class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"
-                ></i>
-              </a>
-            </div>
-          </template>
-        </BaseBlock>
-        <!-- END Conversion Rate-->
+        <!-- Gifts -->
+        <gift-widget/>
+        <!-- END Gifts-->
       </div>
     </div>
     <!-- END Overview -->

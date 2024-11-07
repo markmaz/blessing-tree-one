@@ -25,7 +25,7 @@ export default {
     },
     {
       name: "Sponsors",
-      icon: "si si-badge",
+      icon: "fa fa-medal",
       to: "backend-sponsors",
     },
     {
