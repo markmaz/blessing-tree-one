@@ -65,7 +65,6 @@ function openGiftModal(id){
   giftModal.value.show();
   currentChildID.value = id;
 
-  console.log("Current child id:" + currentChildID.value)
 
   let child_id = family.value.children[currentChildID.value].id;
   gift.value = {description: null, size: null, status: null}
@@ -86,7 +85,6 @@ async function saveGift(){
     try{
       const child_id = family.value.children[currentChildID.value].id;
       await familyService.addGift(family.value.id, child_id, gift.value);
-      //family.value.children[currentChildID.value].gifts.push(gift.value);
     }catch (err){
       console.warn(err);
     }finally {
@@ -109,7 +107,6 @@ async function saveGift(){
 function showRemoveGiftModel(giftIndex, childIndex){
   currentChildID.value = childIndex;
   currentGiftIndex.value = giftIndex;
-  console.log("gift:" + giftIndex + ", chiild: " + childIndex);
   gift.value = family.value.children[childIndex].gifts[giftIndex];
   removeGiftModal.value = new bootstrap.Modal(document.getElementById('deleteGift'));
   removeGiftModal.value.show();
@@ -118,7 +115,6 @@ async function removeGift(){
   try{
     const gift = family.value.children[currentChildID.value].gifts[currentGiftIndex.value]
     await familyService.deleteGift(gift.id)
-    //family.value.children[currentChildID.value].gifts.splice(currentGiftIndex, 1)
   }catch (err){
     console.warn(err);
   }finally {
@@ -149,7 +145,6 @@ async function addChild(){
 
 async function removeChild(){
   try{
-    //family.value.children.splice(id, 1);
     child = family.value.children[currentChildID.value];
     await familyService.deleteChild(child.id, family.value.id);
   }catch (err){
@@ -170,11 +165,8 @@ function openDeleteChildModal(id){
 
 async function fetchFamily(id){
   try{
-    console.log("parent id: " + id)
     const response = await familyService.getFamily(id);
     family.value = response.data
-    console.log(family.value)
-    console.log(family.value.children)
   }catch(err){
     console.warn(err);
   }
@@ -473,9 +465,8 @@ html.theme-flat .child-header.gender-other {
               <label for="status" class="form-label mb-0">Status</label>
               <select id="status" class="form-select form-select-sm" v-model="gift.status">
                 <option selected>Choose...</option>
-                <option value="status_1">Status 1</option>
-                <option value="status_2">Status 2</option>
-                <option value="status_3">Status 3</option>
+                <option value="Pending">Pending</option>
+                <option value="Received">Received</option>
               </select>
             </div>
           </div>
