@@ -18,6 +18,14 @@ apiClient.interceptors.response.use(
 
 export default {
     login(credentials){
-        return apiClient.post('/login', credentials);
+        return apiClient.post(`/login`, credentials);
+    },
+
+    reminder(username){
+        return apiClient.post(`/reminder`, username);
+    },
+
+    reset(userData){
+        return apiClient.post(`/reset`, userData);
     }
 };

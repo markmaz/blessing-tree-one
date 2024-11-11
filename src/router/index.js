@@ -24,13 +24,9 @@ const SeniorView = () => import("@/views/backend/seniors/SeniorsView.vue");
 const GiftView = () => import("@/views/backend/gifts/GiftsView.vue");
 const ReportView = () => import("@/views/backend/reports/ReportsView.vue");
 
-const AuthSignIn3 = () => import("@/views/auth/SignIn3View.vue");
-const AuthSignUp = () => import("@/views/auth/SignUpView.vue");
-const AuthSignUp2 = () => import("@/views/auth/SignUp2View.vue");
-const AuthSignUp3 = () => import("@/views/auth/SignUp3View.vue");
+const AuthSignIn = () => import("@/views/auth/SignInView.vue");
 const AuthReminder = () => import("@/views/auth/ReminderView.vue");
-const AuthReminder2 = () => import("@/views/auth/Reminder2View.vue");
-const AuthReminder3 = () => import("@/views/auth/Reminder3View.vue");
+const AuthReset = () => import("@/views/auth/ResetPasswordView.vue");
 
 // Errors
 const Error400 = () => import("@/views/errors/400View.vue");
@@ -56,7 +52,7 @@ const routes = [
       {
         path: "",
         name: "landing",
-        component: AuthSignIn3,
+        component: AuthSignIn,
       },
     ],
   },
@@ -167,22 +163,7 @@ const routes = [
       {
         path: "signin3",
         name: "auth-signin3",
-        component: AuthSignIn3,
-      },
-      {
-        path: "signup",
-        name: "auth-signup",
-        component: AuthSignUp,
-      },
-      {
-        path: "signup2",
-        name: "auth-signup2",
-        component: AuthSignUp2,
-      },
-      {
-        path: "signup3",
-        name: "auth-signup3",
-        component: AuthSignUp3,
+        component: AuthSignIn,
       },
       {
         path: "reminder",
@@ -190,14 +171,9 @@ const routes = [
         component: AuthReminder,
       },
       {
-        path: "reminder2",
-        name: "auth-reminder2",
-        component: AuthReminder2,
-      },
-      {
-        path: "reminder3",
-        name: "auth-reminder3",
-        component: AuthReminder3,
+        path: "reset/:token",
+        name: "auth-reset",
+        component: AuthReset,
       },
     ],
   },
