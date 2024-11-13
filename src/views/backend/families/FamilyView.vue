@@ -19,6 +19,11 @@ const removeFamilyModal = ref(null);
 
 const cols = reactive([
   {
+    name: "ID",
+    field: "btid",
+    sort: ""
+  },
+  {
     name: "First Name",
     field: "firstName",
     sort: "",
@@ -41,11 +46,6 @@ const cols = reactive([
   {
     name: "MHID",
     field: "mhid",
-    sort: "",
-  },
-  {
-    name: "BT ID",
-    field: "btid",
     sort: "",
   },
   {
@@ -241,7 +241,6 @@ th.sort {
             <table class="table table-striped mb-0">
               <thead>
               <tr>
-                <th scope="col">ID</th>
                 <th
                     v-for="(th, index) in cols"
                     :key="th.field"
@@ -256,13 +255,12 @@ th.sort {
               <DatasetItem tag="tbody" class="fs-sm">
                 <template #default="{ row }">
                   <tr v-if="row">
-                    <th scope="row">{{ row.id }}</th>
+                    <th scope="row">{{ row.btid }}</th>
                     <td style="min-width: 150px">{{ row.firstName }}</td>
                     <td style="min-width: 150px">{{ row.lastName }}</td>
                     <td>{{ row.primaryPhone }}</td>
                     <td>{{ row.secondaryPhone }}</td>
                     <td>{{ row.mhid }}</td>
-                    <td>{{ row.btid }}</td>
                     <td>{{ row.children ? row.children.length : 0 }}</td>
                     <td class="text-center">
                       <div class="btn-group">
