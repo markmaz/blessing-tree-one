@@ -307,104 +307,49 @@ onMounted(() => {
                 />
               </div>
             </div>
+            <div class="row g-4 pt-4 px-2">
+              <div class="col-4 form-check form-switch">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="val-sponsoredPreviously"
+                    v-model="sponsor.hasSponsoredPreviously"
+                />
+                <label class="form-check-label" for="val-sponsoredPreviously">Have you sponsored previously?</label>
+              </div>
+              <div class="col-4 form-check form-switch">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="val-wantToVolunteer"
+                    v-model="sponsor.wantToVolunteer"
+                />
+                <label class="form-check-label" for="val-wantToVolunteer">Would you like to Volunteer?</label>
+              </div>
+            </div>
           </form>
         </div>
       </div>
-<!--      <div class="row" v-if="family.children.length > 0">-->
-<!--        <div class="pb-2 d-flex justify-content-end">-->
-<!--          <div class="me-2"><button type="button" class="btn btn-primary " @click="openChildModal">Add Child</button></div>-->
-<!--        </div>-->
-<!--      </div>-->
+    </BaseBlock>
+    <BaseBlock>
+      <div class="row pb-4">
+        <div class="col-lg-12">
+          <div class="row g-4">
+
+            <div class="form-check form-switch">
+              <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="val-wantToVolunteer"
+                  v-model="sponsor.wantToVolunteer"
+              />
+              <label class="form-check-label" for="example-switch-default1">Have you sponsored previously</label>
+            </div>
+          </div>
+        </div>
+      </div>
     </BaseBlock>
 
-    <!-- Children Display -->
-<!--    <BaseBlock>-->
-<!--      <div class="row" v-if="family.children.length < 1">-->
-<!--        <div class="d-flex justify-content-center pb-3">-->
-<!--          <div class="me-2"><button type="button" :class="['btn', 'btn-primary', family.id == null ? 'disabled': '']" @click="openChildModal">Add Child</button></div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="container mt-4n">-->
-<!--        <div-->
-<!--            v-for="(child, childIndex) in family.children"-->
-<!--            :key="childIndex"-->
-<!--            :class="['mb-4', 'rounded', 'p-4', 'child-border', 'shadow', 'shadow-sm',-->
-<!--           child.gender === 'M' ? 'gender-m' :-->
-<!--           child.gender === 'F' ? 'gender-f' :-->
-<!--           'gender-other']"-->
-<!--        >-->
-
-<!--          &lt;!&ndash; Child Info &ndash;&gt;-->
-<!--          <div class="row align-items-center mb-3 border rounded pb-2 shadow shadow-sm">-->
-<!--            <h5 :class="['text-bg-light', 'rounded', 'p-2', 'child-border', 'child-header', 'shadow', 'shadow-sm',-->
-<!--           child.gender === 'M' ? 'gender-m' :-->
-<!--           child.gender === 'F' ? 'gender-f' :-->
-<!--           'gender-other']">-->
-<!--              Child {{ childIndex + 1 }}-->
-<!--            </h5>-->
-<!--            <div class="col-12 d-flex align-items-center">-->
-<!--              <div class="me-2">-->
-<!--                <label for="age" class="form-label mb-0">Age</label>-->
-<!--                <input @blur="updateChild(childIndex)" type="number" id="age" class="form-control form-control-sm" placeholder="Age" v-model="child.age">-->
-<!--              </div>-->
-<!--              <div class="me-2">-->
-<!--                <label for="gender" class="form-label mb-0">Gender</label>-->
-<!--                <select id="gender" class="form-select form-select-sm" v-model="child.gender" @blur="updateChild(childIndex)">-->
-<!--                  <option selected>Choose...</option>-->
-<!--                  <option value="M">M</option>-->
-<!--                  <option value="F">F</option>-->
-<!--                  <option value="O">O</option>-->
-<!--                </select>-->
-<!--              </div>-->
-<!--              <div class="col text-end">-->
-<!--                <button class="btn btn-danger" @click="openDeleteChildModal(childIndex)">Remove</button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-
-<!--          &lt;!&ndash; Gifts Table or Add Gift Button &ndash;&gt;-->
-<!--          <div v-if="child.gifts.length > 0">-->
-<!--            <table class="table table-striped">-->
-<!--              <thead>-->
-<!--              <tr>-->
-<!--                <th>ID</th>-->
-<!--                <th>Description</th>-->
-<!--                <th>Size</th>-->
-<!--                <th>Status</th>-->
-<!--                <th>Sponsor</th>-->
-<!--                <th>Action</th>-->
-<!--              </tr>-->
-<!--              </thead>-->
-<!--              <tbody>-->
-<!--              <tr v-for="(gift, giftIndex) in child.gifts" :key="giftIndex">-->
-<!--                <td>{{ gift.id }}</td>-->
-<!--                <td>{{ gift.description }}</td>-->
-<!--                <td>{{ gift.size }}</td>-->
-<!--                <td>{{ gift.status }}</td>-->
-<!--                <td>{{ gift.sponsor ? gift.sponsor : 'Not Sponsored' }}</td>-->
-<!--                <td class="text-center">-->
-<!--                  <div class="btn-group">-->
-<!--                    <button type="button" class="btn btn-sm btn-alt-secondary" @click="openEditGift(giftIndex, childIndex)">-->
-<!--                      <i class="fa fa-fw fa-pencil-alt"></i>-->
-<!--                    </button>-->
-<!--                    <button type="button" class="btn btn-sm btn-alt-secondary" @click="showRemoveGiftModel(giftIndex, childIndex)">-->
-<!--                      <i class="fa fa-fw fa-times"></i>-->
-<!--                    </button>-->
-<!--                  </div>-->
-<!--                </td>-->
-<!--              </tr>-->
-<!--              </tbody>-->
-<!--            </table>-->
-<!--            <div class="col text-end">-->
-<!--              <button class="btn btn-primary" @click="openGiftModal(childIndex)">Add Gift</button>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div v-else>-->
-<!--            <button class="btn btn-primary" @click="openGiftModal(childIndex)">Add Gift</button>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </BaseBlock>-->
 
     <!-- Save Button -->
     <div class="block rounded p-2">

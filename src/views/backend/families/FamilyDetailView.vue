@@ -271,7 +271,7 @@ html.theme-flat .child-header.gender-other {
                 />
               </div>
               <div class="col-3">
-                <label class="form-label" for="val-MHID">MHID <span class="text-danger">*</span></label>
+                <label class="form-label" for="val-MHID">MHID</label>
                 <input
                     type="text"
                     id="val-MHID"
@@ -329,7 +329,7 @@ html.theme-flat .child-header.gender-other {
             <div class="col-12 d-flex align-items-center">
               <div class="me-2">
                 <label for="age" class="form-label mb-0">Age</label>
-                <input @blur="updateChild(childIndex)" type="number" id="age" class="form-control form-control-sm" placeholder="Age" v-model="child.age">
+                <input @blur="updateChild(childIndex)" type="text" id="age" class="form-control form-control-sm" placeholder="Age" v-model="child.age">
               </div>
               <div class="me-2">
                 <label for="gender" class="form-label mb-0">Gender</label>
@@ -412,7 +412,7 @@ html.theme-flat .child-header.gender-other {
           <div class="col-12 d-flex align-items-center">
             <div class="me-2">
               <label for="age" class="form-label mb-0">Age</label>
-              <input type="number" id="age" class="form-control form-control-sm" placeholder="Age" v-model="age">
+              <input type="text" id="age" class="form-control form-control-sm" placeholder="Age" v-model="age">
             </div>
             <div class="me-2">
               <label for="gender" class="form-label mb-0">Gender</label>
