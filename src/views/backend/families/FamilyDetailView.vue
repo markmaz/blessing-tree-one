@@ -271,7 +271,7 @@ html.theme-flat .child-header.gender-other {
                 />
               </div>
               <div class="col-3">
-                <label class="form-label" for="val-MHID">MHID <span class="text-danger">*</span></label>
+                <label class="form-label" for="val-MHID">MHID</label>
                 <input
                     type="text"
                     id="val-MHID"
