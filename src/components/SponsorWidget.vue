@@ -5,9 +5,8 @@ import {onMounted, ref} from "vue";
 let count = ref(0);
 async function fetchSponsors(){
   try{
-    const response = await sponsorService.getSponsors();
-    console.log(response.data.length);
-    count.value = response.data.length;
+    const response = await sponsorService.getCount();
+    count.value = response.data.count;
   }catch (err){
     console.warn(err);
   }

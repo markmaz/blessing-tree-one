@@ -15,5 +15,9 @@ export default {
 
     updateSponsor(id, sponsorData){
         return api.put(`/sponsors/${id}`, sponsorData);
-    }
+    },
+
+    getCount(){
+        return api.get(`/sponsors/count`);
+    },
 };

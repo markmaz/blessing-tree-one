@@ -9,6 +9,7 @@ import {
   DatasetShow,
 } from "vue-dataset";
 import { ref, reactive, computed, onMounted } from "vue";
+let loading = ref(true);
 import userDetailView from '@/views/backend/users/UserDetailView.vue';
 import newUserView from "@/views/backend/users/NewUserView.vue";
 
@@ -131,11 +132,14 @@ function closeDeleteModal(){
 
 async function fetchUsers() {
   try {
+    loading.value = true;
     const response = await userService.getUsers();
     users.value = response.data; // Adjust this based on your API response structure
     console.log(users)
   } catch (err) {
     console.warn(err.message);
+  }finally {
+    loading.value = false;
   }
 }
 
@@ -161,17 +165,18 @@ async function deleteUser() {
 }
 
 onMounted(() => {
-  // Remove labels from
-  document.querySelectorAll("#datasetLength label").forEach((el) => {
-    el.remove();
-  });
-
+  if(!loading){
   // Replace select classes
-  let selectLength = document.querySelector("#datasetLength select");
+    document.querySelectorAll("#datasetLength label").forEach((el) => {
+      el.remove();
+    });
 
-  selectLength.classList = "";
-  selectLength.classList.add("form-select");
-  selectLength.style.width = "80px";
+    let selectLength = document.querySelector("#datasetLength select");
+
+    selectLength.classList = "";
+    selectLength.classList.add("form-select");
+    selectLength.style.width = "80px";
+  }
 
   fetchUsers()
   console.log("users:" + users.value)
@@ -224,6 +229,26 @@ th.sort {
     }
   }
 }
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.spinner {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
 
 <template>
@@ -247,7 +272,10 @@ th.sort {
   </BasePageHeading>
   <!-- END Hero -->
   <!-- Page Content -->
-  <div class="content">
+  <div v-if="loading" class="spinner-container">
+    <div class="spinner"></div>
+  </div>
+  <div class="content"  v-if="!loading">
     <Dataset
         v-slot="{ ds }"
         :ds-data="users"
@@ -256,7 +284,7 @@ th.sort {
     >
       <div class="row" :data-page-count="ds.dsPagecount">
         <div id="datasetLength" class="col-md-8 py-2">
-          <DatasetShow />
+          <DatasetShow style="width: 80px"/>
         </div>
         <div class="col-md-4 py-2">
           <DatasetSearch ds-search-placeholder="Search..." />

@@ -45,4 +45,12 @@ export default {
         return api.delete(`/gifts/${giftID}`);
     },
 
+    familyCount(){
+        return api.get(`/parents/count`);
+    },
+
+    childCount(){
+        return api.get(`/children/count`);
+    },
+
 };

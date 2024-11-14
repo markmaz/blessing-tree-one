@@ -4,4 +4,8 @@ export default {
     getSeniors() {
         return api.get('/seniors');
     },
+
+    getCount(){
+        return api.get(`/seniors/count`);
+    },
 };

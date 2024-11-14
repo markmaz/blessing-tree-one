@@ -15,7 +15,11 @@ import giftService from "@/services/giftService.js";
 let gifts = ref([]);
 let giftID = ref(0);
 let loading = ref(true);
-let sponsorModal = ref(null);
+let pagination = ref({
+  page: 1,
+  perPage: 10,
+  totalPages: 1
+})
 
 const cols = reactive([
   {
@@ -34,11 +38,6 @@ const cols = reactive([
     sort: "",
   },
   {
-    name: "Status",
-    field: "status",
-    sort: "",
-  },
-  {
     name: "Age",
     field: "child.age",
     sort: "",
@@ -49,7 +48,7 @@ const cols = reactive([
     sort: "",
   },
   {
-    name: "Family",
+    name: "Last Name",
     field: "child.parent.lastName",
     sort: "",
   },
@@ -112,8 +111,14 @@ function openDetails(id){
 async function fetchGifts() {
   try {
     loading.value = true;
-    const response = await giftService.getGifts();
-    gifts.value = response.data;
+    const { page, perPage } = pagination.value;
+
+    const response = await giftService.getUnsponsoredGifts(page - 1, perPage);
+    const { content, totalPages } = response.data;
+
+    gifts.value = content;
+    pagination.value.totalPages = totalPages;
+
   } catch (err) {
     console.warn(err.message);
   }finally {
@@ -121,10 +126,19 @@ async function fetchGifts() {
   }
 }
 
-function showSponsorModal(){
-  sponsorModal.value = new bootstrap.Modal(document.getElementById('sponsorModal'));
-  sponsorModal.value.show();
+async function handlePageChange(newPage){
+  if (newPage >= 1 && newPage <= pagination.value.totalPages){
+    pagination.value.page = newPage;
+    await fetchGifts();
+  }
 }
+// function showRemoveFamilyModal(id, familyName){
+//   giftID.value = id;
+//   lastName.value = familyName;
+//
+//   removeFamilyModal.value = new bootstrap.Modal(document.getElementById('deleteFamily'));
+//   removeFamilyModal.value.show();
+// }
 
 /*async function removeFamily(){
   try{
@@ -254,7 +268,7 @@ th.sort {
         v-slot="{ ds }"
         :ds-data="gifts"
         :ds-sortby="sortBy"
-        :ds-search-in="['description', 'child.parent.primaryPhone', 'child.parent.lastName', 'child.parent.btid']"
+        :ds-search-in="['description', 'primaryPhoneNumber', 'lastName', 'btid']"
     >
       <div class="row" :data-page-count="ds.dsPagecount">
         <div id="datasetLength" class="col-md-8 py-2">
@@ -274,31 +288,32 @@ th.sort {
                 <th
                     v-for="(th, index) in cols"
                     :key="th.field"
-                    :class="['sort', th.sort,]"
+                    :class="['sort', th.sort]"
                     @click="onSort($event, index)"
                 >
                   {{ th.name }} <i class="gg-select float-end"></i>
                 </th>
-                <th></th>
+                <th>Action</th>
               </tr>
               </thead>
               <DatasetItem tag="tbody" class="fs-sm">
                 <template #default="{ row }">
                   <tr v-if="row">
-                    <th scope="row" class="text-center">{{ row.child.parent.btid }}</th>
-                    <td class="text-center">{{ row.size }}</td>
+                    <th scope="row">{{ row.child.parent.btid }}</th>
+                    <td style="min-width: 150px">{{ row.size }}</td>
                     <td style="min-width: 150px">{{ row.description }}</td>
-                    <td>{{row.status}}</td>
                     <td>{{ row.child.age }}</td>
                     <td>{{ row.child.gender }}</td>
-                    <td>{{ row.child.parent.firstName }} {{ row.child.parent.lastName }}</td>
+                    <td>{{ row.child.parent.lastName }}</td>
                     <td>{{ row.child.parent.primaryPhone }}</td>
                     <td class="text-center">
-                      <div class="btn-group" v-if="!row.sponsor">
-                        <button type="button" class="btn btn-primary" @click="showSponsorModal"><span class="text-sm-center">Find Sponsor</span></button>
-                      </div>
-                      <div v-else>
-                        {{row.sponsor.lastName}}
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-alt-secondary" @click="openDetails(row.id)">
+                          <i class="fa fa-fw fa-pencil-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-alt-secondary" @click="">
+                          <i class="fa fa-fw fa-times"></i>
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -316,27 +331,4 @@ th.sort {
       </div>
     </Dataset>
   </div>
-  <!--Modal-->
-  <div class="modal fade" id="sponsorModal" tabindex="-1" aria-labelledby="sponsor" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="myModalLabel">Coming Soon</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row items-push">
-            <div>Soon you will be able to add a sponsor to a gift from this window.</div>
-            <div>
-              <br>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- End Modal -->
 </template>

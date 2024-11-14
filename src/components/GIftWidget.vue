@@ -7,9 +7,8 @@ import giftService from "@/services/giftService";
 let count = ref(0);
 async function fetchGifts(){
   try{
-    const response = await giftService.getGifts();
-    console.log(response.data.length);
-    count.value = response.data.length;
+    const response = await giftService.getCount();
+    count.value = response.data.count;
   }catch (err){
     console.warn(err);
   }
