@@ -5,9 +5,8 @@ import seniorService from "@/services/seniorService";
 let count = ref(0);
 async function fetchSeniors(){
   try{
-    const response = await seniorService.getSeniors();
-    console.log(response.data.length);
-    count.value = response.data.length;
+    const response = await seniorService.getCount();
+    count.value = response.data.count;
   }catch (err){
     console.warn(err);
   }

@@ -5,9 +5,8 @@ import {onMounted, ref} from "vue";
 let count = ref(0);
 async function fetchFamilies(){
   try{
-    const response = await familyService.getFamilies();
-    console.log(response.data.length);
-    count.value = response.data.length;
+    const response = await familyService.familyCount();
+    count.value = response.data.count;
   }catch (err){
     console.warn(err);
   }

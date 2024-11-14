@@ -16,6 +16,7 @@ let families = ref([]);
 let familyID = ref(0);
 let lastName = ref(null);
 const removeFamilyModal = ref(null);
+let loading = ref(true);
 
 const cols = reactive([
   {
@@ -106,11 +107,14 @@ function openDetails(id){
 }
 async function fetchParents() {
   try {
+    loading.value = true;
     const response = await familyService.getFamilies();
     families.value = response.data; // Adjust this based on your API response structure
     console.log(families)
   } catch (err) {
     console.warn(err.message);
+  }finally {
+    loading.value = false;
   }
 }
 function showRemoveFamilyModal(id, familyName){
@@ -138,12 +142,15 @@ onMounted(() => {
     el.remove();
   });
 
-  // Replace select classes
-  let selectLength = document.querySelector("#datasetLength select");
+  if(!loading.value){
+    let selectLength = document.querySelector("#datasetLength select");
 
-  selectLength.classList = "";
-  selectLength.classList.add("form-select");
-  selectLength.style.width = "80px";
+    selectLength.classList = "";
+    selectLength.classList.add("form-select");
+    selectLength.style.width = "80px";
+  }
+  // Replace select classes
+
 
   fetchParents()
   console.log("parents:" + families.value)
@@ -196,6 +203,27 @@ th.sort {
     }
   }
 }
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.spinner {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 </style>
 
 <template>
@@ -219,7 +247,10 @@ th.sort {
   </BasePageHeading>
   <!-- END Hero -->
   <!-- Page Content -->
-  <div class="content">
+  <div v-if="loading" class="spinner-container">
+    <div class="spinner"></div>
+  </div>
+  <div class="content"  v-if="!loading">
     <Dataset
         v-slot="{ ds }"
         :ds-data="families"
@@ -228,7 +259,7 @@ th.sort {
     >
       <div class="row" :data-page-count="ds.dsPagecount">
         <div id="datasetLength" class="col-md-8 py-2">
-          <DatasetShow />
+          <DatasetShow style="width: 80px"/>
         </div>
         <div class="col-md-4 py-2">
           <DatasetSearch ds-search-placeholder="Search..." />
