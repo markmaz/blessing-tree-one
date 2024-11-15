@@ -5,6 +5,7 @@ import FamilyWidget from "@/components/FamilyWidget.vue";
 import GiftWidget from "@/components/GIftWidget.vue";
 import SponsorWidget from "@/components/SponsorWidget.vue";
 import SeniorsWidget from "@/components/SeniorsWidget.vue";
+import TopTenWidget from "@/components/TopTenWidget.vue";
 
 // vue-chartjs, for more info and examples you can check out https://vue-chartjs.org/ and http://www.chartjs.org/docs/ -->
 import { Line, Bar } from "vue-chartjs";
@@ -73,14 +74,18 @@ const {login, logout, username, isAuthenticated, name, title} = userStore;
       </div>
     </div>
     <!-- END Overview -->
+    <div class="row items-push">
+      <div></div>
+    </div>
     <!-- Recent Orders -->
-    <BaseBlock title="Un-Sponsored Gifts">
-      <template #content>
-        <div class="block-content block-content-full">
-          <div class="text-lg-center">Coming soon</div>
-        </div>
-      </template>
-    </BaseBlock>
+    <div class="row items-push">
+      <div class="col-sm-6 col-xxl-6">
+        <TopTenWidget limit="10" gender="M" title="Top 10 Most Requested Gifts for Boys"/>
+      </div>
+      <div class="col-sm-6 col-xxl-6">
+        <TopTenWidget limit="10" gender="F" title="Top 10 Most Requested Gifts for Girls"/>
+      </div>
+    </div>
     <!-- END Recent Orders -->
   </div>
   <!-- END Page Content -->

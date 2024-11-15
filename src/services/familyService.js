@@ -53,4 +53,12 @@ export default {
         return api.get(`/children/count`);
     },
 
+    addNote(parent_id, note){
+        return api.post(`/parents/${parent_id}/notes`, note);
+    },
+
+    deleteNote(parent_id, note_id){
+        return api.delete(`/parents/${parent_id}/notes/${note_id}`);
+    },
+
 };

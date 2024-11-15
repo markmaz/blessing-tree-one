@@ -291,7 +291,11 @@ th.sort {
                     <td>{{row.status}}</td>
                     <td>{{ row.child.age }}</td>
                     <td>{{ row.child.gender }}</td>
-                    <td>{{ row.child.parent.firstName }} {{ row.child.parent.lastName }}</td>
+                    <td>
+                      <router-link :to="{ name: 'backend-families-details', params: { id: row.child.parent.id } }">
+                        {{ row.child.parent.firstName }} {{ row.child.parent.lastName }}
+                      </router-link>
+                    </td>
                     <td>{{ row.child.parent.primaryPhone }}</td>
                     <td class="text-center">
                       <div class="btn-group" v-if="!row.sponsor">

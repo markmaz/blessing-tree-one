@@ -6,10 +6,14 @@ import router from "@/router/index.js";
 
 const route = useRoute();
 const familyID = Number(route.params.id);
-let family = ref({firstName: null, lastName: null, primaryPhone: null, secondaryPhone: null, mhid: null, btid: null, children: [], id:null})
+let family = ref({firstName: null, lastName: null, primaryPhone: null, secondaryPhone: null, mhid: null, btid: null, children: [], notes: [], id:null})
 const childModal = ref(null);
 const removeChildModal = ref(null);
 const removeGiftModal = ref(null);
+const removeNoteModal = ref(null);
+const addNoteModal = ref(null);
+let note = ref({note: null, noteDate: null, id: null});
+
 const giftModal = ref(null);
 const removeFamilyModal = ref(null);
 
@@ -23,6 +27,44 @@ let currentGiftIndex = ref(null);
 function showRemoveFamilyModal(){
   removeFamilyModal.value = new bootstrap.Modal(document.getElementById('deleteFamily'));
   removeFamilyModal.value.show();
+}
+
+function showRemoveNoteModal(id){
+  note.value.id = id;
+  removeNoteModal.value = new bootstrap.Modal(document.getElementById('removeNote'));
+  removeNoteModal.value.show();
+}
+
+function openNoteModal(){
+  addNoteModal.value = new bootstrap.Modal(document.getElementById('addNote'));
+  addNoteModal.value.show();
+}
+
+
+async function removeNote(){
+  try{
+    const response = await familyService.deleteNote(family.value.id, note.value.id);
+  }catch(err){
+    console.warn(err);
+  }finally {
+    await fetchFamily(family.value.id);
+    removeNoteModal.value.hide();
+  }
+}
+
+async function addNote(){
+  try{
+    const now = new Date();
+    note.value.noteDate = now.toLocaleDateString();
+
+    console.log(note.value);
+    const response = await familyService.addNote(family.value.id, note.value);
+  }catch (err){
+    console.warn(err)
+  }finally {
+    await fetchFamily(family.value.id);
+    addNoteModal.value.hide();
+  }
 }
 
 async function removeFamily(){
@@ -390,6 +432,34 @@ html.theme-flat .child-header.gender-other {
       </div>
     </BaseBlock>
 
+    <div class="block rounded p-2">
+      <div class="row" v-if="family.notes.length < 1">
+        <div class="d-flex justify-content-end p-2">
+          <div class="me-2"><button type="button" :class="['btn', 'btn-primary', family.id == null ? 'disabled': '']" @click="openNoteModal">Add Note</button></div>
+        </div>
+      </div>
+      <div class="row" v-else>
+        <div class="p-4">
+          <table class="table table-striped">
+            <thead>
+              <th style="width: 15%">Date</th>
+              <th style="width: 75%">Note</th>
+              <th style="width: 10%">Action</th>
+            </thead>
+            <tbody>
+              <tr v-for="note in family.notes">
+                <td>{{note.noteDate}}</td>
+                <td style="min-width: 150px">{{note.note}}</td>
+                <td><button class="btn btn-alt-secondary btn-sm" @click="showRemoveNoteModal(note.id)"><i class="fa fa-fw fa-times"></i></button> </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col text-end">
+          <button class="btn btn-primary" @click="openNoteModal">Add Note</button>
+        </div>
+      </div>
+    </div>
     <!-- Save Button -->
     <div class="block rounded p-2">
       <div class="p-1 d-flex justify-content-end">
@@ -542,6 +612,47 @@ html.theme-flat .child-header.gender-other {
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-danger" @click="removeFamily">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="removeNote" tabindex="-1" aria-labelledby="removeNote" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModalLabel">Are you sure you want to delete this note?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row items-push">
+            <div>Are you sure you want to delete this note?</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" @click="removeNote">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="addNote" tabindex="-1" aria-labelledby="addNote" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModalLabel">Add a new note</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row items-push">
+              <div class="mb-4">
+                <label class="form-label" for="val-description">Note<span class="text-danger">*</span></label>
+               <textarea v-model="note.note" class="form-control" rows="4" placeholder="Enter your note"></textarea>
+              </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" @click="addNote">Save</button>
         </div>
       </div>
     </div>
