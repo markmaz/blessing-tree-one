@@ -12,4 +12,8 @@ export default {
     getUnsponsoredGifts(page, size){
         return api.get(`/gifts/unsponsored?page=${page}&size=${size}`);
     },
+
+    getTopTen(gender, limit){
+        return api.get(`/gifts/top-ten?gender=${gender}&limit=${limit}`);
+    },
 };
