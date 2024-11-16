@@ -307,8 +307,8 @@ onMounted(() => {
                 />
               </div>
             </div>
-            <div class="row g-4 pt-4 px-2">
-              <div class="col-4 form-check form-switch">
+            <div class="row g-4 pt-5 px-2">
+              <div class="col-3 form-check form-switch">
                 <input
                     class="form-check-input"
                     type="checkbox"
@@ -317,14 +317,24 @@ onMounted(() => {
                 />
                 <label class="form-check-label" for="val-sponsoredPreviously">Have you sponsored previously?</label>
               </div>
-              <div class="col-4 form-check form-switch">
+              <div class="col-4">
+                <label class="form-label" for="val-numberOfChildrenSponsored">Number of children sponsored</label>
                 <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="val-wantToVolunteer"
-                    v-model="sponsor.wantToVolunteer"
+                    type="number"
+                    id="val-numberOfChildrenSponsored"
+                    class="form-control"
+                    placeholder="Number of Children"
+                    v-model="sponsor.sponsorYear.numberOfChildrenSponsored"
                 />
-                <label class="form-check-label" for="val-wantToVolunteer">Would you like to Volunteer?</label>
+              </div>
+              <div class="col-2">
+                <label for="gender" class="form-label">Gender</label>
+                <select id="gender" class="form-select form-select-sm" v-model="sponsor.sponsorYear.gender" @blur="updateChild(childIndex)">
+                  <option selected>Choose...</option>
+                  <option value="M">M</option>
+                  <option value="F">F</option>
+                  <option value="O">O</option>
+                </select>
               </div>
             </div>
           </form>
@@ -335,15 +345,24 @@ onMounted(() => {
       <div class="row pb-4">
         <div class="col-lg-12">
           <div class="row g-4">
-
-            <div class="form-check form-switch">
+            <div class="col-4">
+              <label class="form-label" for="val-numberOfChildrenSponsored">Number of children sponsored</label>
               <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="val-wantToVolunteer"
-                  v-model="sponsor.wantToVolunteer"
+                  type="number"
+                  id="val-numberOfChildrenSponsored"
+                  class="form-control"
+                  placeholder="Number of Children"
+                  v-model="sponsor.sponsorYear.numberOfChildrenSponsored"
               />
-              <label class="form-check-label" for="example-switch-default1">Have you sponsored previously</label>
+            </div>
+            <div class="col-2">
+              <label for="gender" class="form-label">Gender</label>
+              <select id="gender" class="form-select form-select-sm" v-model="sponsor.sponsorYear.gender" @blur="updateChild(childIndex)">
+                <option selected>Choose...</option>
+                <option value="M">M</option>
+                <option value="F">F</option>
+                <option value="O">O</option>
+              </select>
             </div>
           </div>
         </div>
