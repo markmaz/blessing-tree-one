@@ -152,7 +152,8 @@ onMounted(() => {
 const flattenedData = computed(() => {
   return gifts.value.flatMap(parent =>
       parent.children.flatMap((child, index) =>
-          child.gifts.map(gift => ({
+          child.gifts
+              .filter(gift => !gift?.sponsor?.id).map(gift => ({
             parentId: parent.id,
             parentBtid: parent.btid,
             parentPrimaryPhone: parent.primaryPhone,
@@ -166,9 +167,9 @@ const flattenedData = computed(() => {
             giftDescription: gift.description,
             giftStatus: gift.status,
             sequentialChildName: `Child ${index + 1}`,
-            sponsorFirstName: gift?.sponsor?.firstName || null,
-            sponsorLastName: gift?.sponsor?.lastName || null,
-            sponsorId: gift?.sponsor?.sponsorId || null,
+            // sponsorFirstName: gift?.sponsor?.firstName || null,
+            // sponsorLastName: gift?.sponsor?.lastName || null,
+            // sponsorId: gift?.sponsor?.sponsorId || null,
           }))
       )
   );
@@ -290,11 +291,8 @@ const flattenedData = computed(() => {
                       </router-link>
                     </td>
                     <td class="text-center">
-                      <div class="btn-group" v-if="!row.sponsor">
+                      <div class="btn-group">
                         <input type="checkbox" @click="addGift(row.giftId)">
-                      </div>
-                      <div v-else>
-                        {{row.sponsorLastName}}
                       </div>
                     </td>
                   </tr>
