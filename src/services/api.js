@@ -11,6 +11,7 @@ const api = axios.create({
     baseURL:config.apiBaseUrl, // Use your environment variable or static URL
     headers: {
         'Content-Type': 'application/json',
+        'Accept-Encoding': 'gzip',
     },
 });
 

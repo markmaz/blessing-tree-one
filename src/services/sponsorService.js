@@ -20,4 +20,8 @@ export default {
     getCount(){
         return api.get(`/sponsors/count`);
     },
+
+    deleteSponsor(id){
+        return api.delete(`/sponsors/${id}`);
+    }
 };

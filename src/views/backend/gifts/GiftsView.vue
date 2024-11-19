@@ -9,9 +9,10 @@ import {
   DatasetSearch,
   DatasetShow,
 } from "vue-dataset";
-import { ref, reactive, computed, onMounted } from "vue";
+import {ref, reactive, computed, onMounted, watch} from "vue";
 import giftService from "@/services/giftService.js";
 
+//let gifts = ref([{id: 0, btid: null, firstName: null, lastName: null, primaryPhone: null, children:[{id: 0, gender: null, age:null, gifts:[{size: null, description: null, id: null, sponsor:{id: 0}}]}]}]);
 let gifts = ref([]);
 let giftID = ref(0);
 let loading = ref(true);
@@ -21,6 +22,11 @@ const cols = reactive([
   {
     name: "ID",
     field: "child.parent.btid",
+    sort: ""
+  },
+  {
+    name: "Child",
+    field: "childnumber",
     sort: ""
   },
   {
@@ -114,6 +120,7 @@ async function fetchGifts() {
     loading.value = true;
     const response = await giftService.getGifts();
     gifts.value = response.data;
+    console.log(gifts.value);
   } catch (err) {
     console.warn(err.message);
   }finally {
@@ -154,6 +161,35 @@ onMounted(() => {
 
 
   fetchGifts()
+});
+
+const flattenedData = computed(() => {
+  return gifts.value.flatMap(parent =>
+      parent.children.flatMap((child, index) =>
+          child.gifts.map(gift => ({
+            parentId: parent.id,
+            parentBtid: parent.btid,
+            parentPrimaryPhone: parent.primaryPhone,
+            parentFirstName: parent.firstName,
+            parentLastName: parent.lastName,
+            childId: child.id,
+            childGender: child.gender,
+            childAge: child.age || 'N/A',
+            giftId: gift.id,
+            giftSize: gift.size,
+            giftDescription: gift.description,
+            giftStatus: gift.status,
+            sequentialChildName: `Child ${index + 1}`,
+            sponsorFirstName: gift?.sponsor?.firstName || null,
+            sponsorLastName: gift?.sponsor?.lastName || null,
+            sponsorId: gift?.sponsor?.id || null,
+          }))
+      )
+  );
+});
+
+watch(flattenedData, (newData) => {
+  console.log('Flattened Data:', newData);
 });
 
 </script>
@@ -249,16 +285,16 @@ th.sort {
   <div v-if="loading" class="spinner-container">
     <div class="spinner"></div>
   </div>
-  <div class="content"  v-if="!loading">
+  <div class="content" v-if="!loading">
     <Dataset
         v-slot="{ ds }"
-        :ds-data="gifts"
-        :ds-sortby="sortBy"
-        :ds-search-in="['description', 'child.parent.primaryPhone', 'child.parent.lastName', 'child.parent.btid']"
-    >
+        :ds-data="flattenedData">
+<!--        :ds-sortby="sortBy"-->
+<!--        :ds-search-in="['description', 'child.parent.primaryPhone', 'child.parent.lastName', 'child.parent.btid']"-->
+
       <div class="row" :data-page-count="ds.dsPagecount">
         <div id="datasetLength" class="col-md-8 py-2">
-          <DatasetShow style="width: 80px"/>
+          <DatasetShow style="width: 80px" />
         </div>
         <div class="col-md-4 py-2">
           <DatasetSearch ds-search-placeholder="Search..." />
@@ -274,35 +310,38 @@ th.sort {
                 <th
                     v-for="(th, index) in cols"
                     :key="th.field"
-                    :class="['sort', th.sort,]"
+                    :class="['sort', th.sort]"
                     @click="onSort($event, index)"
                 >
                   {{ th.name }} <i class="gg-select float-end"></i>
                 </th>
-                <th></th>
+                <th>Sponsor</th>
               </tr>
               </thead>
               <DatasetItem tag="tbody" class="fs-sm">
                 <template #default="{ row }">
                   <tr v-if="row">
-                    <th scope="row" class="text-center">{{ row.child.parent.btid }}</th>
-                    <td class="text-center">{{ row.size }}</td>
-                    <td style="min-width: 150px">{{ row.description }}</td>
-                    <td>{{row.status}}</td>
-                    <td>{{ row.child.age }}</td>
-                    <td>{{ row.child.gender }}</td>
+                    <td class="text-center">{{ row.parentBtid }}</td>
+                    <td class="text-center">{{ row.sequentialChildName }}</td>
+                    <td class="text-center">{{ row.giftSize }}</td>
+                    <td style="min-width: 150px">{{ row.giftDescription }}</td>
+                    <td>{{ row.giftStatus }}</td>
+                    <td>{{ row.childAge }}</td>
+                    <td>{{ row.childGender }}</td>
                     <td>
-                      <router-link :to="{ name: 'backend-families-details', params: { id: row.child.parent.id } }">
-                        {{ row.child.parent.firstName }} {{ row.child.parent.lastName }}
+                      <router-link :to="{ name: 'backend-families-details', params: { id: row.parentId} }">
+                        {{ row.parentFirstName }} {{ row.parentLastName }}
                       </router-link>
                     </td>
-                    <td>{{ row.child.parent.primaryPhone }}</td>
+                    <td>{{ row.parentPrimaryPhone }}</td>
                     <td class="text-center">
-                      <div class="btn-group" v-if="!row.sponsor">
+                      <div class="btn-group" v-if="!row.sponsorId">
                         <button type="button" class="btn btn-primary" @click="showSponsorModal"><span class="text-sm-center">Find Sponsor</span></button>
                       </div>
                       <div v-else>
-                        {{row.sponsor.lastName}}
+                        <router-link :to="{ name: 'backend-sponsors-detail', params: { id: row.sponsorId } }">
+                          {{ row.sponsorFirstName }} {{ row.sponsorLastName }}
+                        </router-link>
                       </div>
                     </td>
                   </tr>
@@ -312,9 +351,7 @@ th.sort {
           </div>
         </div>
       </div>
-      <div
-          class="d-flex flex-md-row flex-column justify-content-between align-items-center"
-      >
+      <div class="d-flex flex-md-row flex-column justify-content-between align-items-center">
         <DatasetInfo class="py-3 fs-sm" />
         <DatasetPager class="flex-wrap py-3 fs-sm" />
       </div>

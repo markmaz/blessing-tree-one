@@ -4,8 +4,8 @@ import {useUserStore} from  "@/stores/userStore";
 import FamilyWidget from "@/components/FamilyWidget.vue";
 import GiftWidget from "@/components/GIftWidget.vue";
 import SponsorWidget from "@/components/SponsorWidget.vue";
-import SeniorsWidget from "@/components/SeniorsWidget.vue";
 import TopTenWidget from "@/components/TopTenWidget.vue";
+import ChildWidget from "@/components/ChildWidget.vue";
 
 // vue-chartjs, for more info and examples you can check out https://vue-chartjs.org/ and http://www.chartjs.org/docs/ -->
 import { Line, Bar } from "vue-chartjs";
@@ -59,7 +59,7 @@ const {login, logout, username, isAuthenticated, name, title} = userStore;
       </div>
       <div class="col-sm-6 col-xxl-3">
         <!-- New Customers -->
-        <seniorsWidget/>
+        <child-widget/>
         <!-- END New Customers -->
       </div>
       <div class="col-sm-6 col-xxl-3">
