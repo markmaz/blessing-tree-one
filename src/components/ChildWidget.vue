@@ -5,7 +5,7 @@ import {onMounted, ref} from "vue";
 let count = ref(0);
 async function fetchFamilies(){
   try{
-    const response = await familyService.familyCount();
+    const response = await familyService.childCount();
     count.value = response.data.count;
   }catch (err){
     console.warn(err);
@@ -29,11 +29,11 @@ onMounted(() => {
         <dl class="mb-0">
           <dt class="fs-3 fw-bold">{{ count }}</dt>
           <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-            Families
+            Children
           </dd>
         </dl>
         <div class="item item-rounded-lg bg-body-light">
-          <i class="fa fa-people-group fs-3 text-primary"></i>
+          <i class="fa fa-baby fs-3 text-primary"></i>
         </div>
       </div>
       <div class="bg-body-light rounded-bottom">

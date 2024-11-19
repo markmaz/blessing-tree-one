@@ -9,11 +9,19 @@ export default {
         return api.get(`/gifts/count`);
     },
 
-    getUnsponsoredGifts(page, size){
-        return api.get(`/gifts/unsponsored?page=${page}&size=${size}`);
+    getUnsponsoredGifts(){
+        return api.get(`/gifts/unsponsored`);
     },
 
     getTopTen(gender, limit){
         return api.get(`/gifts/top-ten?gender=${gender}&limit=${limit}`);
     },
+
+    sponsorGift(giftID, sponsorID){
+        return api.post(`/gifts/${giftID}/sponsors/${sponsorID}`);
+    },
+
+    unSponsorGift(giftID, sponsorID){
+        return api.delete(`/gifts/${giftID}/sponsors/${sponsorID}`);
+    }
 };

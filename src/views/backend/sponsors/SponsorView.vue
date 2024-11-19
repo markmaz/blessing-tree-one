@@ -11,10 +11,13 @@ import {
   DatasetSearch,
   DatasetShow,
 } from "vue-dataset";
-import familyService from "@/services/familyService.js";
 
 let sponsors = ref([]);
 let sponsorID = ref(0);
+let loading = ref(true);
+
+const deleteSponsorModal = ref(null);
+const sponsorName = ref(null);
 
 const cols = reactive([
   {
@@ -43,6 +46,24 @@ const cols = reactive([
     sort: "",
   }
 ]);
+
+function openRemoveSponsorModal(id, firstName, lastName){
+  sponsorID.value = id;
+  sponsorName.value = firstName + " " + lastName;
+  deleteSponsorModal.value = new bootstrap.Modal(document.getElementById('removeSponsorModal'));
+  deleteSponsorModal.value.show();
+}
+
+async function removeSponsor(){
+  try{
+    const response = sponsorService.deleteSponsor(sponsorID.value);
+  }catch (err){
+    console.warn(err);
+  }finally {
+    await fetchSponsors();
+    deleteSponsorModal.value.hide();
+  }
+}
 
 const sortBy = computed(() => {
   return cols.reduce((acc, o) => {
@@ -95,26 +116,32 @@ function openDetails(id){
 }
 async function fetchSponsors() {
   try {
+    loading.value =true;
     const response = await sponsorService.getSponsors();
     sponsors.value = response.data; // Adjust this based on your API response structure
     console.log(sponsors.value)
   } catch (err) {
     console.warn(err.message);
+  }finally {
+    loading.value=false;
   }
 }
 
 onMounted(() => {
-  // Remove labels from
-  document.querySelectorAll("#datasetLength label").forEach((el) => {
-    el.remove();
-  });
+  if(!loading.value){
+    // Remove labels from
+    document.querySelectorAll("#datasetLength label").forEach((el) => {
+      el.remove();
+    });
 
-  // Replace select classes
-  let selectLength = document.querySelector("#datasetLength select");
+    // Replace select classes
+    let selectLength = document.querySelector("#datasetLength select");
 
-  selectLength.classList = "";
-  selectLength.classList.add("form-select");
-  selectLength.style.width = "80px";
+    selectLength.classList = "";
+    selectLength.classList.add("form-select");
+    selectLength.style.width = "80px";
+  }
+
 
   fetchSponsors()
   console.log("sponsors:" + sponsors.value)
@@ -166,6 +193,26 @@ th.sort {
     }
   }
 }
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.spinner {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
 
 <template>
@@ -189,7 +236,10 @@ th.sort {
   </BasePageHeading>
   <!-- END Hero -->
   <!-- Page Content -->
-  <div class="content">
+  <div v-if="loading" class="spinner-container">
+    <div class="spinner"></div>
+  </div>
+  <div class="content"  v-if="!loading">
     <Dataset
         v-slot="{ ds }"
         :ds-data="sponsors"
@@ -198,7 +248,7 @@ th.sort {
     >
       <div class="row" :data-page-count="ds.dsPagecount">
         <div id="datasetLength" class="col-md-8 py-2">
-          <DatasetShow />
+          <DatasetShow style="width: 80px" />
         </div>
         <div class="col-md-4 py-2">
           <DatasetSearch ds-search-placeholder="Search..." />
@@ -237,7 +287,7 @@ th.sort {
                         <button type="button" class="btn btn-sm btn-alt-secondary" @click="openDetails(row.id)">
                           <i class="fa fa-fw fa-pencil-alt"></i>
                         </button>
-                        <button type="button" class="btn btn-sm btn-alt-secondary" @click="showRemoveSponsorModal(row.id, row.lastName)">
+                        <button type="button" class="btn btn-sm btn-alt-secondary" @click="openRemoveSponsorModal(row.id, row.firstName, row.lastName)">
                           <i class="fa fa-fw fa-times"></i>
                         </button>
                       </div>
@@ -257,29 +307,29 @@ th.sort {
       </div>
     </Dataset>
   </div>
-  <div class="modal fade" id="deleteFamily" tabindex="-1" aria-labelledby="deleteFamily" aria-hidden="true">
+  <div class="modal fade" id="removeSponsorModal" tabindex="-1" aria-labelledby="removeSponsorModal" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="myModalLabel">Are you sure you want to delete this family?</h5>
+          <h5 class="modal-title" id="myModalLabel">Are you sure you want to delete this Sponsor?</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row items-push">
-            <div>Are you sure you want to delete the <strong>{{}}</strong> family?</div>
+            <div>Are you sure you want to delete this Sponsor: <strong>{{sponsorName}}</strong>?</div>
             <div>
               <br>
               <p class="text-danger">
-                If you delete the family, you will also delete all the children and gifts associated with this family.
+                If you delete the Sponsor, the gifts they have sponsored will become un-sponsored.
                 Once deleted, the data can not be retrieved and you may lose hours of work and all the information tied
-                to this family. If you're not sure about deleting this family, please ask.
+                to this Sponsor. If you're not sure about deleting this Sponsor, please ask.
               </p>
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-danger" @click="removeFamily">Delete</button>
+          <button type="button" class="btn btn-danger" @click="removeSponsor">Delete</button>
         </div>
       </div>
     </div>

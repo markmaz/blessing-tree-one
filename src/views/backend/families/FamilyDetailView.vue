@@ -209,6 +209,7 @@ async function fetchFamily(id){
   try{
     const response = await familyService.getFamily(id);
     family.value = response.data
+    console.log(family.value)
   }catch(err){
     console.warn(err);
   }
@@ -407,7 +408,8 @@ html.theme-flat .child-header.gender-other {
                 <td>{{ gift.description }}</td>
                 <td>{{ gift.size }}</td>
                 <td>{{ gift.status }}</td>
-                <td>{{ gift.sponsor ? gift.sponsor : 'Not Sponsored' }}</td>
+                <td v-if="gift.sponsor"><router-link :to="{ name: 'backend-sponsors-detail', params: { id: gift.sponsor.id } }">{{gift.sponsor.firstName}} {{gift.sponsor.lastName}}</router-link></td>
+                <td v-else><button type="button" class="btn btn-primary" @click="showSponsorModal"><span class="text-sm-center">Find Sponsor</span></button></td>
                 <td class="text-center">
                   <div class="btn-group">
                     <button type="button" class="btn btn-sm btn-alt-secondary" @click="openEditGift(giftIndex, childIndex)">
