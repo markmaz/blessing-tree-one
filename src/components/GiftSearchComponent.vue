@@ -39,13 +39,8 @@ let searchQuery = ref('');
 
 const cols = reactive([
   {
-    name: "Size",
-    field: "size",
-    sort: "",
-  },
-  {
-    name: "Description",
-    field: "description",
+    name: "ID",
+    field: "parentBTID",
     sort: "",
   },
   {
@@ -61,6 +56,16 @@ const cols = reactive([
   {
     name: "Gender",
     field: "childGender",
+    sort: "",
+  },
+  {
+    name: "Size",
+    field: "size",
+    sort: "",
+  },
+  {
+    name: "Description",
+    field: "description",
     sort: "",
   },
   {
@@ -280,11 +285,12 @@ const flattenedData = computed(() => {
               <DatasetItem tag="tbody" class="fs-sm">
                 <template #default="{ row }">
                   <tr v-if="row">
-                    <td class="text-center">{{ row.giftSize }}</td>
-                    <td style="min-width: 150px">{{ row.giftDescription }}</td>
+                    <td>{{row.parentBtid}}</td>
                     <td>{{row.sequentialChildName}}</td>
                     <td>{{ row.childAge }}</td>
                     <td>{{ row.childGender }}</td>
+                    <td>{{ row.giftSize }}</td>
+                    <td style="min-width: 150px">{{ row.giftDescription }}</td>
                     <td>
                       <router-link @click.prevent="handleLinkClick" :to="{ name: 'backend-families-details', params: { id: row.parentId } }">
                         {{ row.parentFirstName }} {{ row.parentLastName }}

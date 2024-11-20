@@ -12,7 +12,6 @@ import {
 import {ref, reactive, computed, onMounted, watch} from "vue";
 import giftService from "@/services/giftService.js";
 
-//let gifts = ref([{id: 0, btid: null, firstName: null, lastName: null, primaryPhone: null, children:[{id: 0, gender: null, age:null, gifts:[{size: null, description: null, id: null, sponsor:{id: 0}}]}]}]);
 let gifts = ref([]);
 let giftID = ref(0);
 let loading = ref(true);
@@ -132,17 +131,6 @@ function showSponsorModal(){
   sponsorModal.value = new bootstrap.Modal(document.getElementById('sponsorModal'));
   sponsorModal.value.show();
 }
-
-/*async function removeFamily(){
-  try{
-    await familyService.deleteFamily(familyID.value);
-    removeFamilyModal.value.hide();
-  }catch (err){
-    console.warn(err);
-  }finally {
-    await fetchGifts();
-  }
-}*/
 
 onMounted(() => {
   // Remove labels from

@@ -20,6 +20,7 @@ const FamilyDetailView = () => import("@/views/backend/families/FamilyDetailView
 
 const SponsorView = () => import("@/views/backend/sponsors/SponsorView.vue");
 const SponsorDetailView = () => import("@/views/backend/sponsors/SponsorDetailView.vue")
+const SponsorVolunteerView = () => import("@/views/backend/sponsors/SponsorVolunteerView.vue")
 const SeniorView = () => import("@/views/backend/seniors/SeniorsView.vue");
 const GiftView = () => import("@/views/backend/gifts/GiftsView.vue");
 const ReportView = () => import("@/views/backend/reports/ReportsView.vue");
@@ -109,6 +110,13 @@ const routes = [
         path: "sponsors-detail/:id",
         name: "backend-sponsors-detail",
         component: SponsorDetailView,
+        meta: { requiresAuth: true },
+      },
+
+      {
+        path: "sponsors-volunteer",
+        name: "backend-sponsors-volunteer",
+        component: SponsorVolunteerView,
         meta: { requiresAuth: true },
       },
 

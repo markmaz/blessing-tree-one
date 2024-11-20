@@ -347,16 +347,18 @@ onMounted(() => {
                 <th>Description</th>
                 <th>Size</th>
                 <th>Status</th>
+                <th>Child ID</th>
                 <th>Family</th>
                 <th>Action</th>
               </tr>
               </thead>
               <tbody>
               <tr v-for="(gift, giftIndex) in sponsor.gifts" :key="giftIndex">
-                <td>{{ gift.id }}</td>
+                <td>{{ gift.child.parent.btid }}</td>
                 <td>{{ gift.description }}</td>
                 <td>{{ gift.size }}</td>
                 <td>{{ gift.status }}</td>
+                <td>{{gift.child.id}}</td>
                 <td><router-link :to="{ name: 'backend-families-details', params: { id: gift.child.parent.id } }">{{gift.child.parent.firstName}} {{gift.child.parent.lastName}}</router-link></td>
                 <td class="text-center">
                   <div class="btn-group">
