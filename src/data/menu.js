@@ -26,12 +26,7 @@ export default {
     {
       name: "Sponsors",
       icon: "fa fa-medal",
-      to: "backend-sponsors",
-    },
-    {
-      name: "Seniors",
-      icon: "fa fa-person-cane",
-      to: "backend-seniors",
+      to: "backend-sponsors-volunteer",
     },
     {
       name: "Gifts",
@@ -57,6 +52,11 @@ export default {
           to: "backend-reports",
         },
       ],
+    },
+    {
+      name: "Sponsor Admin",
+      icon: "fa fa-medal",
+      to: "backend-sponsors",
     },
   ],
 };

@@ -23,5 +23,10 @@ export default {
 
     deleteSponsor(id){
         return api.delete(`/sponsors/${id}`);
+    },
+
+    addLogEntry(id, logEntry){
+        return api.post(`/sponsors/${id}/logEntries`, logEntry);
     }
+
 };
