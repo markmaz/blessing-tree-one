@@ -33,20 +33,29 @@ const cols = reactive([
   },
   {
     name: "Age",
-    field: "child.age",
+    field: "childAge",
     sort: "",
   },
   {
     name: "Gender",
-    field: "child.gender",
+    field: "childGender",
     sort: "",
   },
   {
     name: "Phone #",
-    field: "child.parent.primaryPhoneNumber",
+    field: "parentPrimaryPhone",
     sort: ""
   }
 ]);
+
+const sortBy = computed(() => {
+  return cols.reduce((acc, o) => {
+    if (o.sort) {
+      o.sort === "asc" ? acc.push(o.field) : acc.push("-" + o.field);
+    }
+    return acc;
+  }, []);
+});
 
 function onSort(event, i) {
   let toset;
