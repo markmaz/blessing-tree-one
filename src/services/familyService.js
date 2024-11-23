@@ -61,4 +61,8 @@ export default {
         return api.delete(`/parents/${parent_id}/notes/${note_id}`);
     },
 
+    getUnsponsoredChildren(){
+        return api.get(`parents/unsponsored_children`);
+    },
+
 };

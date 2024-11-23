@@ -48,8 +48,8 @@ export default {
       subActivePaths: "/backend/reports",
       sub: [
         {
-          name: "Un-Sponsored Gifts",
-          to: "backend-reports",
+          name: "Un-Sponsored Children",
+          to: "backend-reports-unsponsored",
         },
       ],
     },
