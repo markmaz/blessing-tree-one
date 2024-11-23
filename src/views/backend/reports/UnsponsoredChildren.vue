@@ -1,4 +1,5 @@
 <script setup>
+import familyService from "@/services/familyService.js";
 import router from "@/router/index.js";
 
 import {
@@ -10,31 +11,24 @@ import {
   DatasetShow,
 } from "vue-dataset";
 import { ref, reactive, computed, onMounted } from "vue";
-import giftService from "@/services/giftService.js";
 
-let gifts = ref([]);
-let giftID = ref(0);
+let children = ref([]);
 let loading = ref(true);
-let pagination = ref({
-  page: 1,
-  perPage: 10,
-  totalPages: 1
-})
 
 const cols = reactive([
   {
     name: "ID",
-    field: "child.parent.btid",
+    field: "parentBtid",
     sort: ""
   },
   {
-    name: "Size",
-    field: "size",
+    name: "Family Name",
+    field: "parentLastName",
     sort: "",
   },
   {
-    name: "Description",
-    field: "description",
+    name: "Child Name",
+    field: "sequentialChildName",
     sort: "",
   },
   {
@@ -48,27 +42,12 @@ const cols = reactive([
     sort: "",
   },
   {
-    name: "Last Name",
-    field: "child.parent.lastName",
-    sort: "",
-  },
-  {
     name: "Phone #",
     field: "child.parent.primaryPhoneNumber",
     sort: ""
   }
 ]);
 
-const sortBy = computed(() => {
-  return cols.reduce((acc, o) => {
-    if (o.sort) {
-      o.sort === "asc" ? acc.push(o.field) : acc.push("-" + o.field);
-    }
-    return acc;
-  }, []);
-});
-
-// On sort th click
 function onSort(event, i) {
   let toset;
   const sortEl = cols[i];
@@ -102,74 +81,87 @@ function onSort(event, i) {
     });
   }
 }
-
-function openDetails(id){
-  giftID.value = id;
-  console.log(giftID.value)
-  router.push({name:'backend-families-details', params:{id: id}});
-}
-async function fetchGifts() {
-  try {
-    loading.value = true;
-    const { page, perPage } = pagination.value;
-
-    const response = await giftService.getUnsponsoredGifts(page - 1, perPage);
-    const { content, totalPages } = response.data;
-
-    gifts.value = content;
-    pagination.value.totalPages = totalPages;
-
-  } catch (err) {
-    console.warn(err.message);
-  }finally {
-    loading.value = false;
-  }
-}
-
-async function handlePageChange(newPage){
-  if (newPage >= 1 && newPage <= pagination.value.totalPages){
-    pagination.value.page = newPage;
-    await fetchGifts();
-  }
-}
-// function showRemoveFamilyModal(id, familyName){
-//   giftID.value = id;
-//   lastName.value = familyName;
-//
-//   removeFamilyModal.value = new bootstrap.Modal(document.getElementById('deleteFamily'));
-//   removeFamilyModal.value.show();
-// }
-
-/*async function removeFamily(){
+async function fetchChildren(){
   try{
-    await familyService.deleteFamily(familyID.value);
-    removeFamilyModal.value.hide();
+    const response = await familyService.getUnsponsoredChildren();
+    children.value = response.data;
+    console.log(children.value);
   }catch (err){
-    console.warn(err);
+    console.error(err);
   }finally {
-    await fetchGifts();
+    loading.value=false;
   }
-}*/
+}
 
-onMounted(() => {
-  // Remove labels from
-  document.querySelectorAll("#datasetLength label").forEach((el) => {
-    el.remove();
-  });
-
+onMounted(() =>{
   if(!loading.value){
+    document.querySelectorAll("#datasetLength label").forEach((el) => {
+      el.remove();
+    });
+
     let selectLength = document.querySelector("#datasetLength select");
 
     selectLength.classList = "";
     selectLength.classList.add("form-select");
     selectLength.style.width = "80px";
   }
+  fetchChildren();
+})
 
-  fetchGifts()
+// const flattenedData = computed(() => {
+//   return children.value.flatMap(parent =>
+//       parent.children.flatMap((child, index) =>
+//           child.gifts
+//               .filter(gift => !gift?.sponsor?.id).map(gift => ({
+//             parentId: parent.id,
+//             parentBtid: parent.btid,
+//             parentPrimaryPhone: parent.primaryPhone,
+//             parentFirstName: parent.firstName,
+//             parentLastName: parent.lastName,
+//             childId: child.id,
+//             childGender: child.gender,
+//             childAge: child.age || 'N/A',
+//             giftId: gift.id,
+//             giftSize: gift.size,
+//             giftDescription: gift.description,
+//             giftStatus: gift.status,
+//             sequentialChildName: `Child ${index + 1}`,
+//           }))
+//       )
+//   );
+// });
+
+const flattenedData = computed(() => {
+  return children.value.flatMap(parent =>
+      parent.children
+          .filter(child => child.gifts.length === 0) // Only include children without gifts
+          .map((child, index) => ({
+            parentId: parent.id,
+            parentBtid: parent.btid,
+            parentPrimaryPhone: parent.primaryPhone,
+            parentFirstName: parent.firstName,
+            parentLastName: parent.lastName,
+            childId: child.id,
+            childGender: child.gender,
+            childAge: child.age || 'N/A',
+            sequentialChildName: `Child ${index + 1}`,
+          }))
+  );
 });
+const showOneGiftOnly = ref(false);
 
+const filteredChildren = computed(() => {
+  if (showOneGiftOnly.value) {
+    return flattenedData.filter(
+        (element) => element.children.gifts.slice(0, 1)
+    );
+  }
+
+  return flattenedData;
+});
 </script>
-<style lang="scss" scoped>
+
+<style scoped>
 .gg-select {
   box-sizing: border-box;
   position: relative;
@@ -206,14 +198,14 @@ th.sort {
   user-select: none;
   &.asc {
     .gg-select::after {
-      opacity: 1;
-    }
+    opacity: 1;
   }
-  &.desc {
-    .gg-select::before {
-      opacity: 1;
-    }
-  }
+}
+&.desc {
+.gg-select::before {
+  opacity: 1;
+}
+}
 }
 .spinner-container {
   display: flex;
@@ -264,9 +256,9 @@ th.sort {
   <div class="content"  v-if="!loading">
     <Dataset
         v-slot="{ ds }"
-        :ds-data="gifts"
+        :ds-data="flattenedData"
         :ds-sortby="sortBy"
-        :ds-search-in="['description', 'primaryPhoneNumber', 'lastName', 'btid']"
+        :ds-search-in="['parentBtid', 'parentLastName', 'parentFirstName', 'parentPrimaryPhone']"
     >
       <div class="row" :data-page-count="ds.dsPagecount">
         <div id="datasetLength" class="col-md-8 py-2">
@@ -291,29 +283,21 @@ th.sort {
                 >
                   {{ th.name }} <i class="gg-select float-end"></i>
                 </th>
-                <th>Action</th>
               </tr>
               </thead>
               <DatasetItem tag="tbody" class="fs-sm">
                 <template #default="{ row }">
                   <tr v-if="row">
-                    <th scope="row">{{ row.child.parent.btid }}</th>
-                    <td style="min-width: 150px">{{ row.size }}</td>
-                    <td style="min-width: 150px">{{ row.description }}</td>
-                    <td>{{ row.child.age }}</td>
-                    <td>{{ row.child.gender }}</td>
-                    <td>{{ row.child.parent.lastName }}</td>
-                    <td>{{ row.child.parent.primaryPhone }}</td>
-                    <td class="text-center">
-                      <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-alt-secondary" @click="openDetails(row.id)">
-                          <i class="fa fa-fw fa-pencil-alt"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-alt-secondary" @click="">
-                          <i class="fa fa-fw fa-times"></i>
-                        </button>
-                      </div>
+                    <th scope="row">{{ row.parentBtid}}</th>
+                    <td>
+                      <router-link :to="{ name: 'backend-families-details', params: { id: row.parentId} }">
+                        {{ row.parentFirstName }} {{ row.parentLastName }}
+                      </router-link>
                     </td>
+                    <td>{{row.sequentialChildName}}</td>
+                    <td>{{ row.childAge }}</td>
+                    <td>{{ row.childGender }}</td>
+                    <td>{{ row.parentPrimaryPhone }}</td>
                   </tr>
                 </template>
               </DatasetItem>
