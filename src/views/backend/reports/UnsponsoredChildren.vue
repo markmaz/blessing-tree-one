@@ -143,7 +143,6 @@ onMounted(() =>{
 const flattenedData = computed(() => {
   return children.value.flatMap(parent =>
       parent.children
-          .filter(child => child.gifts.length === 0) // Only include children without gifts
           .map((child, index) => ({
             parentId: parent.id,
             parentBtid: parent.btid,
@@ -153,7 +152,7 @@ const flattenedData = computed(() => {
             childId: child.id,
             childGender: child.gender,
             childAge: child.age || 'N/A',
-            sequentialChildName: `Child ${index + 1}`,
+            sequentialChildName: child.name,
           }))
   );
 });

@@ -171,7 +171,7 @@ const flattenedData = computed(() => {
             giftSize: gift.size,
             giftDescription: gift.description,
             giftStatus: gift.status,
-            sequentialChildName: `Child ${index + 1}`,
+            sequentialChildName: child.name,
             // sponsorFirstName: gift?.sponsor?.firstName || null,
             // sponsorLastName: gift?.sponsor?.lastName || null,
             // sponsorId: gift?.sponsor?.sponsorId || null,
