@@ -174,6 +174,7 @@ async function addChild(){
   const newChild = {
     age: age.value,
     gender: gender.value,
+    name: "Child " + (family.value.children.length + 1),
     gifts:[],
   };
 
@@ -367,7 +368,7 @@ html.theme-flat .child-header.gender-other {
            child.gender === 'M' ? 'gender-m' :
            child.gender === 'F' ? 'gender-f' :
            'gender-other']">
-              Child {{ childIndex + 1 }}
+             {{ child.name }}
             </h5>
             <div class="col-12 d-flex align-items-center">
               <div class="me-2">
@@ -559,7 +560,7 @@ html.theme-flat .child-header.gender-other {
         </div>
         <div class="modal-body">
           <div class="row items-push">
-            <div>Are you sure you want to delete <strong>Child {{currentChildID + 1}}</strong></div>
+            <div>Are you sure you want to delete <strong>{{child.name}}</strong></div>
             <div>Age: {{child.age}}</div>
             <div>Gender: {{child.gender}}</div>
             <div>And all of their gifts: {{child.gifts.length}}</div>
