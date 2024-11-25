@@ -242,8 +242,8 @@ th.sort {
 <template>
   <!-- Hero -->
   <BasePageHeading
-      title="Gifts"
-      subtitle="Manage all gifts here."
+      title="Un-sponsored Children"
+      subtitle="View all the children that haven't been sponsored yet."
   >
     <template #extra>
       <nav aria-label="breadcrumb">

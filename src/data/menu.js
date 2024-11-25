@@ -51,6 +51,10 @@ export default {
           name: "Un-Sponsored Children",
           to: "backend-reports-unsponsored",
         },
+        {
+          name: "Gift Tags",
+          to: "backend-reports-giftTags",
+        },
       ],
     },
     {
