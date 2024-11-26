@@ -27,6 +27,9 @@ const selectedGifts = ref([]);
 let saveGiftText = ref("Save Gift");
 let giftID = ref(null);
 const showModal = ref("false");
+const emit = defineEmits(['giftsAdded']);
+const childRef = ref(null);
+
 
 function addGift(value){
   const val = selectedGifts.value.indexOf(value);
@@ -46,6 +49,14 @@ function addGift(value){
 function closeModal() {
   showAddGift.value.hide();
   showModal.value = "false";
+  selectedGifts.value.slice(0, selectedGifts.value.length);
+  
+  if(childRef.value){
+    console.log("here");
+    childRef.value.fetch();
+  }else{
+    console.log(childRef.value);
+  }
 }
 const cols = reactive([
   {
@@ -117,6 +128,13 @@ async function saveGift(){
     }finally {
       await fetchSponsors();
       showAddGift.value.hide();
+
+      if(childRef.value){
+        console.log("here");
+        childRef.value.fetch();
+      }else{
+        console.log(childRef.value);
+      }
     }
   }
 }
@@ -462,10 +480,10 @@ th.sort {
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <GiftSearchComponent @closeModal="closeModal" @addGift="addGift" :show-modal="showModal"/>
+          <GiftSearchComponent @closeModal="closeModal" @addGift="addGift" :show-modal="showModal" ref="childRef"/>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">Close</button>
           <button type="button" class="btn btn-primary btn-warning" @click="saveGift">{{ saveGiftText }}</button>
         </div>
       </div>
