@@ -26,7 +26,7 @@ watch(
     }
 );
 
-import {ref, reactive, computed, onMounted, watch} from "vue";
+import {ref, reactive, computed, onMounted, watch, defineExpose} from "vue";
 import giftService from "@/services/giftService.js";
 const emit = defineEmits(['closeModal', 'addGift']);
 function handleLinkClick() {
@@ -122,6 +122,15 @@ function onSort(event, i) {
 function addGift(id){
   emit("addGift", id);
 }
+
+const fetch = () =>{
+  console.log("In child fetch");
+  fetchGifts();
+}
+
+defineExpose({
+  fetch
+});
 
 async function fetchGifts() {
   try {
