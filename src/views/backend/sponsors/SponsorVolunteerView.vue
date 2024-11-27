@@ -30,7 +30,6 @@ const showModal = ref("false");
 const emit = defineEmits(['giftsAdded']);
 const childRef = ref(null);
 
-
 function addGift(value){
   const val = selectedGifts.value.indexOf(value);
 
@@ -50,7 +49,7 @@ function closeModal() {
   showAddGift.value.hide();
   showModal.value = "false";
   selectedGifts.value.slice(0, selectedGifts.value.length);
-  
+
   if(childRef.value){
     console.log("here");
     childRef.value.fetch();

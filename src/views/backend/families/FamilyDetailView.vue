@@ -3,6 +3,8 @@ import {useRoute} from "vue-router";
 import {onMounted, ref} from "vue";
 import familyService from "@/services/familyService.js";
 import router from "@/router/index.js";
+import tagService from "@/services/tagService.js";
+import utils from "@/utility/utils.js";
 
 const route = useRoute();
 const familyID = Number(route.params.id);
@@ -23,6 +25,23 @@ let age = ref(null);
 let gender = ref(null);
 let gift = ref({id: null, child_id: null, description: null, size: null, status: null, sponsor_id: null})
 let currentGiftIndex = ref(null);
+
+async function printGiftTags(){
+  try {
+    const response = await tagService.printGiftTagsForFamily(family.value.id);
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = url;
+    const date = utils.getCurrentDateTime();
+    const fileName = family.value.lastName + "_giftTags_printed_on_" + date + ".pdf";
+    link.setAttribute('download', fileName); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up after download
+  } catch (err){
+    console.error(err);
+  }
+}
 
 function showRemoveFamilyModal(){
   removeFamilyModal.value = new bootstrap.Modal(document.getElementById('deleteFamily'));
@@ -466,6 +485,7 @@ html.theme-flat .child-header.gender-other {
     <!-- Save Button -->
     <div class="block rounded p-2">
       <div class="p-1 d-flex justify-content-end">
+        <div class="me-2"><button type="button" class="btn btn-primary" @click="printGiftTags">Print Gift Tags</button></div>
         <div class="me-2"><button :class="['btn', 'btn-secondary']" class="btn btn-danger" @click="router.push({name:'backend-families'})">Cancel</button></div>
         <div class="me-2" v-if="family.id != null"><button :class="['btn', 'btn-danger']" @click="showRemoveFamilyModal">Remove Family</button></div>
         <div class="me-2"><button type="button" class="btn btn-primary" @click="saveFamily">Save Family</button></div>
