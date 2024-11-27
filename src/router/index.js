@@ -26,6 +26,7 @@ const GiftView = () => import("@/views/backend/gifts/GiftsView.vue");
 const ReportView = () => import("@/views/backend/reports/ReportsView.vue");
 const UnsponsoredChildReport = () => import("@/views/backend/reports/UnsponsoredChildren.vue");
 const GiftTags = () => import("@/views/backend/reports/GiftTags.vue");
+const RosterView = () => import("@/views/backend/reports/RosterView.vue");
 const AuthSignIn = () => import("@/views/auth/SignInView.vue");
 const AuthReminder = () => import("@/views/auth/ReminderView.vue");
 const AuthReset = () => import("@/views/auth/ResetPasswordView.vue");
@@ -131,7 +132,7 @@ const routes = [
       {
         path: "gifts",
         name: "backend-gifts",
-        component: GiftView,
+        component: RosterView,
         meta: { requiresAuth: true },
       },
 
