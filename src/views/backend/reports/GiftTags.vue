@@ -1,30 +1,17 @@
 <script setup>
 import tagService from "@/services/tagService.js";
+import utils from "@/utility/utils.js";
+
 import {ref} from "vue";
 let tags = ref(1);
 
-function getCurrentDateTime() {
-  const now = new Date();
-
-  const pad = (num) => String(num).padStart(2, '0');
-
-  const month = pad(now.getMonth() + 1); // Months are 0-based
-  const day = pad(now.getDate());
-  const year = now.getFullYear();
-
-  const hours = pad(now.getHours());
-  const minutes = pad(now.getMinutes());
-  const seconds = pad(now.getSeconds());
-
-  return `${month}_${day}_${year}_${hours}${minutes}${seconds}`;
-}
 async function generateTags(){
   try {
     const response = await tagService.printGiftTags(tags.value);
     const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
     const link = document.createElement('a');
     link.href = url;
-    const date = getCurrentDateTime();
+    const date = utils.getCurrentDateTime();
     const fileName = tags.value + "_giftTags_printed_on_" + date + ".pdf";
     link.setAttribute('download', fileName); // Set the file name
     document.body.appendChild(link);

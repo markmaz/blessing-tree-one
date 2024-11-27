@@ -11,12 +11,51 @@ import {
   DatasetShow,
 } from "vue-dataset";
 import { ref, reactive, computed, onMounted } from "vue";
+import tagService from "@/services/tagService.js";
+import utils from "@/utility/utils.js";
 
 let families = ref([]);
 let familyID = ref(0);
 let lastName = ref(null);
 const removeFamilyModal = ref(null);
 let loading = ref(true);
+
+async function printGiftTags(id, name) {
+  try {
+    const response = await tagService.printGiftTagsForFamily(id);
+    const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}));
+    const link = document.createElement('a');
+    link.href = url;
+    const date = utils.getCurrentDateTime();
+    const fileName = name + "_giftTags_printed_on_" + date + ".pdf";
+    link.setAttribute('download', fileName); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up after download
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function printAllGiftTags() {
+  try {
+    loading.value = true
+    const response = await tagService.printGiftTagsForAllFamilies();
+    const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}));
+    const link = document.createElement('a');
+    link.href = url;
+    const date = utils.getCurrentDateTime();
+    const fileName = "all_giftTags_printed_on_" + date + ".pdf";
+    link.setAttribute('download', fileName); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up after download
+  } catch (err) {
+    console.error(err);
+  }finally {
+    loading.value = false;
+  }
+}
 
 const cols = reactive([
   {
@@ -265,6 +304,11 @@ th.sort {
           <DatasetSearch ds-search-placeholder="Search..." />
         </div>
       </div>
+      <div class="row">
+        <div class="p-1 d-flex justify-content-end">
+          <div class="me-2"><button type="button" class="btn btn-primary" @click="printAllGiftTags">Print Gift Tags</button></div>
+        </div>
+      </div>
       <hr />
       <div class="row">
         <div class="col-md-12">
@@ -300,6 +344,9 @@ th.sort {
                         </button>
                         <button type="button" class="btn btn-sm btn-alt-secondary" @click="showRemoveFamilyModal(row.id, row.lastName)">
                           <i class="fa fa-fw fa-times"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-alt-secondary" @click="printGiftTags(row.id, row.lastName)">
+                          <i class="fa fa-fw fa-print"></i>
                         </button>
                       </div>
                     </td>

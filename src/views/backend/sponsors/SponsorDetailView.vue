@@ -5,6 +5,8 @@ import sponsorService from "@/services/sponsorService.js";
 import giftService from "@/services/giftService.js";
 import router from "@/router/index.js";
 import GiftSearchComponent from "@/components/GiftSearchComponent.vue";
+import tagService from "@/services/tagService.js";
+import utils from "@/utility/utils.js";
 
 const route = useRoute();
 const sponsorID = Number(route.params.id);
@@ -23,7 +25,22 @@ let saveGiftText = ref("Save Gift");
 const removeGiftModel = ref(null);
 let giftID = ref(null);
 const showModal = ref("false");
-
+async function printGiftTags(){
+  try {
+    const response = await tagService.printGiftTagsForSponsor(sponsor.value.id);
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = url;
+    const date = utils.getCurrentDateTime();
+    const fileName = sponsor.value.lastName + "_giftTags_printed_on_" + date + ".pdf";
+    link.setAttribute('download', fileName); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up after download
+  } catch (err){
+    console.error(err);
+  }
+}
 function addGift(value){
   const val = selectedGifts.value.indexOf(value);
 
@@ -382,6 +399,7 @@ onMounted(() => {
     <!-- Save Button -->
     <div class="block rounded p-2">
       <div class="p-1 d-flex justify-content-end">
+        <div class="me-2"><button type="button" class="btn btn-primary" @click="printGiftTags">Print Gift Tags</button></div>
         <div class="me-2"><button :class="['btn', 'btn-secondary']" class="btn btn-danger" @click="router.push({name:'backend-sponsors'})">Cancel</button></div>
         <div class="me-2" v-if="sponsor.id != null"><button :class="['btn', 'btn-danger']" @click="openRemoveSponsorModal">Remove Sponsor</button></div>
         <div class="me-2"><button type="button" class="btn btn-primary" @click="saveSponsor">Save Sponsor</button></div>
