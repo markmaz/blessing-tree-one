@@ -7,6 +7,35 @@ import tagService from "@/services/tagService.js";
 let families = ref([{id: 0, btid: "", children:[{gifts:[{sponsor:{id:0, firstName:null, lastName:null}}]}]}]);
 let loading = ref(false);
 
+async function printReport(){
+  loading.value = true;
+
+  try {
+    const filters = [];
+    if (azFilter.value) filters.push("AZ");
+    if (btFilter.value) filters.push("BT");
+    if (fcFilter.value) filters.push("FC");
+    if (hbFilter.value) filters.push("HB");
+    if (oakFilter.value) filters.push("OAK");
+
+    const roster = {units: filters, parents: filteredFamilies.value};
+    const response = await tagService.printRosterReport(roster);
+    const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}));
+    const link = document.createElement('a');
+    link.href = url;
+    const date = utils.getCurrentDateTime();
+    const fileName = filters.join("_") + "_roster_printed_on_" + date + ".pdf";
+    link.setAttribute('download', fileName); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up after download
+
+  }catch (err){
+   console.error(err);
+  }finally {
+    loading.value =false;
+  }
+}
 async function printGiftTags(id, name) {
   try {
     const response = await tagService.printGiftTagsForFamily(id);
@@ -165,6 +194,9 @@ const filteredFamilies = computed(() => {
         />
         <label class="form-check-label" for="val-oak">OAK</label>
       </div>
+      <div class="col-2">
+        <button class="btn btn-primary" @click="printReport"><i class="fa fa-fw me-1 fa-print"></i>Print Report</button>
+      </div>
     </div>
     <table class="table table-bordered">
       <thead>
@@ -179,7 +211,7 @@ const filteredFamilies = computed(() => {
         <th>Phone</th>
         <th>Action</th>
       </thead>
-      <tbody>
+      <tbody style="font-size: 0.875rem;">
       <template v-for="(parent, parentIndex) in filteredFamilies" :key="parent.id">
         <tr>
           <td class="bg-info-subtle">{{ parent.btid }}</td>

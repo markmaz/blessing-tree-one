@@ -24,4 +24,11 @@ export default {
             responseType: 'blob',
         });
     },
+
+    printRosterReport(data){
+        return api.post(`/pdf/reports/roster`, data, {
+            responseType: 'blob',
+        });
+    },
+
 }
