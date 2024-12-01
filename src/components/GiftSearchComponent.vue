@@ -135,7 +135,7 @@ defineExpose({
 async function fetchGifts() {
   try {
     loading.value = true;
-    const response = await giftService.getUnsponsoredGifts();
+    const response = await giftService.getGifts();
     gifts.value = response.data;
   } catch (err) {
     console.warn(err.message);
@@ -306,8 +306,9 @@ const flattenedData = computed(() => {
                       </router-link>
                     </td>
                     <td class="text-center">
-                      <div class="btn-group">
-                        <input type="checkbox" @click="addGift(row.giftId)">
+                      <div class="form-check form-block">
+                        <input class="form-check-input" type="checkbox" @click="addGift(row.giftId)" :id="'gift' + row.giftId" :name="'gift' + row.giftId">
+                        <label class="form-check-label" :for="'gift' + row.giftId"><i class="fa fa-gift"></i> </label>
                       </div>
                     </td>
                   </tr>

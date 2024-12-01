@@ -5,6 +5,8 @@ import familyService from "@/services/familyService.js";
 import router from "@/router/index.js";
 import tagService from "@/services/tagService.js";
 import utils from "@/utility/utils.js";
+import giftService from "@/services/giftService.js";
+import SponsorSearchComponent from "@/components/SponsorSearchComponent.vue";
 
 const route = useRoute();
 const familyID = Number(route.params.id);
@@ -25,6 +27,36 @@ let age = ref(null);
 let gender = ref(null);
 let gift = ref({id: null, child_id: null, description: null, size: null, status: null, sponsor_id: null})
 let currentGiftIndex = ref(null);
+let sponsorSearchModal = ref(null);
+let selectedGiftID = ref(null);
+let selectedSponsorID = ref(null);
+const childRef = ref(null);
+async function openSponsorModal(id){
+  selectedGiftID.value = id;
+  childRef.value.fetchSponsor();
+  sponsorSearchModal.value = new bootstrap.Modal(document.getElementById('sponsorModal'));
+  sponsorSearchModal.value.show();
+}
+
+function addSponsor(sponsorID){
+  selectedSponsorID.value = sponsorID;
+}
+
+function closeModal() {
+  sponsorSearchModal.value.hide();
+}
+
+async function saveSponsor() {
+  console.log(selectedGiftID.value, selectedSponsorID.value);
+  try{
+    await giftService.sponsorGift(selectedGiftID.value, selectedSponsorID.value);
+  }catch (err){
+    console.error(err);
+  }finally {
+    sponsorSearchModal.value.hide();
+    await fetchFamily(family.value.id);
+  }
+}
 
 async function printGiftTags(){
   try {
@@ -414,7 +446,6 @@ html.theme-flat .child-header.gender-other {
             <table class="table table-striped">
               <thead>
               <tr>
-                <th>ID</th>
                 <th>Description</th>
                 <th>Size</th>
                 <th>Status</th>
@@ -424,12 +455,11 @@ html.theme-flat .child-header.gender-other {
               </thead>
               <tbody>
               <tr v-for="(gift, giftIndex) in child.gifts" :key="giftIndex">
-                <td>{{ gift.id }}</td>
                 <td>{{ gift.description }}</td>
                 <td>{{ gift.size }}</td>
                 <td>{{ gift.status }}</td>
                 <td v-if="gift.sponsor"><router-link :to="{ name: 'backend-sponsors-detail', params: { id: gift.sponsor.id } }">{{gift.sponsor.firstName}} {{gift.sponsor.lastName}}</router-link></td>
-                <td v-else><button type="button" class="btn btn-primary" @click="showSponsorModal"><span class="text-sm-center">Find Sponsor</span></button></td>
+                <td v-else><button type="button" class="btn btn-primary" @click="openSponsorModal(gift.id)"><span class="text-sm-center">Find Sponsor</span></button></td>
                 <td class="text-center">
                   <div class="btn-group">
                     <button type="button" class="btn btn-sm btn-alt-secondary" @click="openEditGift(giftIndex, childIndex)">
@@ -680,4 +710,24 @@ html.theme-flat .child-header.gender-other {
       </div>
     </div>
   </div>
+
+  <!-- Sponsor Search Modal -->
+  <div class="modal fade modal-xl" id="sponsorModal" tabindex="-1" aria-labelledby="sponsorModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModalLabel">Search Sponsors</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <SponsorSearchComponent @closeModal="closeModal" @addSponsor="addSponsor" ref="childRef"/>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">Close</button>
+          <button type="button" class="btn btn-primary btn-warning" @click="saveSponsor">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Sponsor Search Modal -->
 </template>

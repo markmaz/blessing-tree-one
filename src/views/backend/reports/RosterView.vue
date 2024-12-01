@@ -3,9 +3,61 @@ import familyService from "@/services/familyService.js";
 import utils from "@/utility/utils.js";
 import {computed, onMounted, ref} from "vue";
 import tagService from "@/services/tagService.js";
+import SponsorSearchComponent from "@/components/SponsorSearchComponent.vue";
+import giftService from "@/services/giftService.js";
 
 let families = ref([{id: 0, btid: "", children:[{gifts:[{sponsor:{id:0, firstName:null, lastName:null}}]}]}]);
 let loading = ref(false);
+let sponsorSearchModal = ref(null);
+let selectedGiftID = ref(null);
+let selectedSponsorID = ref(null);
+const childRef = ref(null);
+
+async function openSponsorModal(id){
+  selectedGiftID.value = id;
+  childRef.value.fetchSponsor();
+  sponsorSearchModal.value = new bootstrap.Modal(document.getElementById('sponsorModal'));
+  sponsorSearchModal.value.show();
+}
+
+function addSponsor(sponsorID){
+  selectedSponsorID.value = sponsorID;
+}
+
+function closeModal() {
+  sponsorSearchModal.value.hide();
+}
+
+async function saveSponsor() {
+  console.log(selectedGiftID.value, selectedSponsorID.value);
+  try{
+    await giftService.sponsorGift(selectedGiftID.value, selectedSponsorID.value);
+  }catch (err){
+    console.error(err);
+  }finally {
+    sponsorSearchModal.value.hide();
+    await fetch();
+  }
+}
+async function printAllGiftTags() {
+  try {
+    loading.value = true
+    const response = await tagService.printGiftTagsForAllFamilies();
+    const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}));
+    const link = document.createElement('a');
+    link.href = url;
+    const date = utils.getCurrentDateTime();
+    const fileName = "all_giftTags_printed_on_" + date + ".pdf";
+    link.setAttribute('download', fileName); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up after download
+  } catch (err) {
+    console.error(err);
+  }finally {
+    loading.value = false;
+  }
+}
 
 async function printReport(){
   loading.value = true;
@@ -74,6 +126,19 @@ let btFilter = ref(true);
 let fcFilter = ref(true);
 let hbFilter = ref(true);
 let oakFilter = ref(true);
+let unsponsoredFilter = ref(false);
+
+const filterGifts = computed(() => {
+  if (unsponsoredFilter.value) {
+    return families.value.filter((family) =>
+        family.children.some((child) =>
+            child.gifts.some((gift) => !gift.sponsor || gift.sponsor.id === null)
+        )
+    );
+  } else {
+    return families.value;
+  }
+});
 
 const filteredFamilies = computed(() => {
     const filters = [];
@@ -92,7 +157,7 @@ const filteredFamilies = computed(() => {
       return [{children:[]}];
     }
 
-    return families.value.filter((family) => {
+    return filterGifts.value.filter((family) => {
       return filters.some((filter) => family.btid.includes(filter));
     });
 });
@@ -130,10 +195,15 @@ const filteredFamilies = computed(() => {
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb breadcrumb-alt">
 
-          <li class="breadcrumb-item">
-            <a class="link-fx " href="javascript:void(0)" @click="">
-              <span class="fa fa-gift fa-2x"></span>
-            </a>
+          <li class="breadcrumb-item items-push">
+            <div class="row g-2">
+              <div class="col-auto">
+                <button class="btn btn-primary" @click="printAllGiftTags"><i class="fa fa-fw me-1 fa-gift"></i>Print All Gift Tags</button>
+              </div>
+              <div class="col-auto">
+                <button class="btn btn-primary" @click="printReport"><i class="fa fa-fw me-1 fa-print"></i>Print Report</button>
+              </div>
+            </div>
           </li>
         </ol>
       </nav>
@@ -143,18 +213,22 @@ const filteredFamilies = computed(() => {
     <div class="spinner"></div>
   </div>
   <div class="content" v-if="!loading">
-    <div class="row items-push pb-3 justify-content-center">
-      <div class="col-2 form-check form-switch">
+    <div class="row g-3 pb-3 justify-content-center">
+      <div class="col-auto">
+        <div class="form-check form-block">
         <input
             checked
             class="form-check-input"
             type="checkbox"
             id="val-az"
             v-model="azFilter"
+            name="val-az"
         />
-        <label class="form-check-label" for="val-az">AZ</label>
+        <label class="form-check-label" for="val-az" style="width: 100px; background-color: white">AZ</label>
+        </div>
       </div>
-      <div class="col-2 form-check form-switch">
+      <div class="col-auto">
+        <div class="form-check form-block">
         <input
             checked
             class="form-check-input"
@@ -162,9 +236,11 @@ const filteredFamilies = computed(() => {
             id="val-bt"
             v-model="btFilter"
         />
-        <label class="form-check-label" for="val-bt">BT</label>
+        <label class="form-check-label" for="val-bt" style="width: 100px; background-color: white">BT</label>
+        </div>
       </div>
-      <div class="col-2 form-check form-switch">
+      <div class="col-auto">
+        <div class="form-check form-block">
         <input
             checked
             class="form-check-input"
@@ -172,9 +248,11 @@ const filteredFamilies = computed(() => {
             id="val-fc"
             v-model="fcFilter"
         />
-        <label class="form-check-label" for="val-fc">FC</label>
+        <label class="form-check-label" for="val-fc" style="width: 100px; background-color: white">FC</label>
+        </div>
       </div>
-      <div class="col-2 form-check form-switch">
+      <div class="col-auto">
+        <div class="form-check form-block">
         <input
             checked
             class="form-check-input"
@@ -182,9 +260,11 @@ const filteredFamilies = computed(() => {
             id="val-hb"
             v-model="hbFilter"
         />
-        <label class="form-check-label" for="val-hb">HB</label>
+        <label class="form-check-label" for="val-hb" style="width: 100px; background-color: white">HB</label>
       </div>
-      <div class="col-2 form-check form-switch">
+      </div>
+      <div class="col-auto">
+        <div class="form-check form-block">
         <input
             checked
             class="form-check-input"
@@ -192,10 +272,20 @@ const filteredFamilies = computed(() => {
             id="val-oak"
             v-model="oakFilter"
         />
-        <label class="form-check-label" for="val-oak">OAK</label>
+        <label class="form-check-label" for="val-oak" style="width: 100px; background-color: white">OAK</label>
+        </div>
       </div>
-      <div class="col-2">
-        <button class="btn btn-primary" @click="printReport"><i class="fa fa-fw me-1 fa-print"></i>Print Report</button>
+      <div class="col-auto">
+        <div class="form-check form-block">
+          <input
+              checked
+              class="form-check-input"
+              type="checkbox"
+              id="val-unsponsored"
+              v-model="unsponsoredFilter"
+          />
+          <label class="form-check-label" for="val-unsponsored" style="background-color: white">Unsponsored Children</label>
+        </div>
       </div>
     </div>
     <table class="table table-bordered">
@@ -247,6 +337,7 @@ const filteredFamilies = computed(() => {
                 <router-link :to="{ name: 'backend-sponsors-detail', params: { id:  gift.sponsor.id} }" v-if="gift.sponsor">
                   {{gift?.sponsor?.firstName}} {{gift?.sponsor?.lastName}}
                 </router-link>
+                <button class="btn btn-primary" v-else @click="openSponsorModal(gift.id)">Find Sponsor</button>
             </td>
             <td :class="childIndex % 2 > 0 ? 'bg-light' : ''">{{gift?.sponsor?.phone}}</td>
             <td></td>
@@ -257,4 +348,24 @@ const filteredFamilies = computed(() => {
       </tbody>
     </table>
   </div>
+
+  <!-- Sponsor Search Modal -->
+  <div class="modal fade modal-xl" id="sponsorModal" tabindex="-1" aria-labelledby="sponsorModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModalLabel">Search Sponsors</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <SponsorSearchComponent @closeModal="closeModal" @addSponsor="addSponsor" ref="childRef"/>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">Close</button>
+          <button type="button" class="btn btn-primary btn-warning" @click="saveSponsor">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Sponsor Search Modal -->
 </template>

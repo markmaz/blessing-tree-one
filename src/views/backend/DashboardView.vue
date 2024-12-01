@@ -10,6 +10,7 @@ import ChildWidget from "@/components/ChildWidget.vue";
 // vue-chartjs, for more info and examples you can check out https://vue-chartjs.org/ and http://www.chartjs.org/docs/ -->
 import { Line, Bar } from "vue-chartjs";
 import { Chart, registerables } from "chart.js";
+import TopSponsorsWidget from "@/components/TopSponsorsWidget.vue";
 const userStore = useUserStore();
 Chart.register(...registerables);
 
@@ -87,6 +88,11 @@ const {login, logout, username, isAuthenticated, name, title} = userStore;
       </div>
     </div>
     <!-- END Recent Orders -->
+    <div class="row items-push">
+      <div class="col-sm-12 col-xxl-12">
+        <TopSponsorsWidget title="Sponsors" limit="25"/>
+      </div>
+    </div>
   </div>
   <!-- END Page Content -->
 </template>

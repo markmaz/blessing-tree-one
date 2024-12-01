@@ -27,6 +27,9 @@ export default {
 
     addLogEntry(id, logEntry){
         return api.post(`/sponsors/${id}/logEntries`, logEntry);
-    }
+    },
 
+    getTopSponsors() {
+        return api.get(`/sponsors/top`);
+    }
 };

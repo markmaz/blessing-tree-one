@@ -111,6 +111,7 @@ function getCurrentDateTime() {
 }
 
 function openSearchGiftModal(id){
+  childRef.value.fetch();
   currentSponsor.value = sponsors.value.find(s => s.id === id);
   showModal.value = "true";
   showAddGift.value = new bootstrap.Modal(document.getElementById('addGift'));
