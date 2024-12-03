@@ -294,7 +294,8 @@ async function updateStatus(sponsorID, status){
   sponsor.giftStatus = status;
 
   try{
-    const response = await sponsorService.updateSponsor(sponsorID, sponsor);
+    const response = await sponsorService.updateGiftStatus(sponsorID, status);
+    console.log(response.data);
   }catch(err){
     console.error(err);
   }
