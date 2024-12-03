@@ -31,5 +31,9 @@ export default {
 
     getTopSponsors() {
         return api.get(`/sponsors/top`);
+    },
+
+    updateGiftStatus(id, status){
+        return api.post(`/sponsors/${id}/giftStatus/${status}`);
     }
 };
