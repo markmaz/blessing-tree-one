@@ -13,6 +13,7 @@ import {
   DatasetShow,
 } from "vue-dataset";
 import giftService from "@/services/giftService.js";
+import OptionsView from "@/views/backend/blocks/OptionsView.vue";
 
 let sponsors = ref([{}]);
 let sponsorID = ref(0);
@@ -79,7 +80,12 @@ const cols = reactive([
     sort: "",
   },
   {
-    name: "# of Children",
+    name: "# Pledged",
+    field: "giftCount",
+    sort: "",
+  },
+  {
+    name: "# Sponsored",
     field: "numberOfChildrenSponsored",
     sort: "",
   },
@@ -92,7 +98,7 @@ const cols = reactive([
     name: "Gender",
     field: "genderPreference",
     sort: "",
-  }
+  },
 ]);
 function getCurrentDateTime() {
   const now = new Date();
@@ -213,15 +219,37 @@ async function fetchSponsors() {
   }
 }
 const showNonSponsorsOnly = ref(false);
+const pendingFilter = ref(true);
+const receivedFilter = ref(true);
+const partialFilter = ref(false);
+
+const filteredData = computed(() => {
+  return sponsors.value.map((sponsor) => ({
+    ... sponsor,
+    giftCount: sponsor.gifts.length,
+  }));
+})
 
 const filteredSponsors = computed(() => {
   if (showNonSponsorsOnly.value) {
-    return sponsors.value.filter(
-        (sponsor) => sponsor.gifts.length < sponsor.numberOfChildrenSponsored
+    return filteredData.value.filter(
+        (sponsor) => sponsor.giftCount < sponsor.numberOfChildrenSponsored
     );
   }
 
-  return sponsors.value;
+  return filteredData.value;
+});
+
+const statusFilters = computed(() => {
+  const filters = [];
+
+  if (pendingFilter.value) filters.push("Pending");
+  if (receivedFilter.value) filters.push("Received");
+  if (partialFilter.value) filters.push("Partial");
+
+  return filteredSponsors.value.filter((sponsor) => {
+    return filters.some((filter) => sponsor.giftStatus.includes(filter));
+  });
 });
 
 onMounted(() => {
@@ -243,6 +271,34 @@ onMounted(() => {
   fetchSponsors()
   console.log("sponsors:" + sponsors.value)
 });
+
+function getBorderColor(row){
+  if (row.logEntries.some((log) => log.callDescription === 'None')) {
+    return row.giftStatus === "Pending" ? "yellow-border" :
+        row.giftStatus === "Received" ? "green-border" : "";
+  }
+
+  if (row.giftCount > 0) {
+    return row.giftStatus === "Pending" ? "yellow-border" :
+        row.giftStatus === "Received" ? "green-border" : "";
+  }else{
+    if(row.logEntries.length > 0){
+      return "red-border"
+    }
+  }
+
+}
+
+async function updateStatus(sponsorID, status){
+  const sponsor = sponsors.value.find((sponsor) => sponsor.id === sponsorID);
+  sponsor.giftStatus = status;
+
+  try{
+    const response = await sponsorService.updateSponsor(sponsorID, sponsor);
+  }catch(err){
+    console.error(err);
+  }
+}
 </script>
 <style lang="scss" scoped>
 .gg-select {
@@ -315,6 +371,16 @@ th.sort {
   border-left: 3px solid lightcoral !important;
   border-right: 3px solid lightcoral !important;
 }
+
+.yellow-border {
+  border-left: 3px solid lightsalmon !important;
+  border-right: 3px solid lightsalmon !important;
+}
+
+.green-border {
+  border-left: 3px solid lightgreen !important;
+  border-right: 3px solid lightgreen !important;
+}
 </style>
 
 <template>
@@ -344,7 +410,7 @@ th.sort {
   <div class="content"  v-if="!loading">
     <Dataset
         v-slot="{ ds }"
-        :ds-data="filteredSponsors"
+        :ds-data="statusFilters"
         :ds-sortby="sortBy"
         :ds-search-in="['firstName', 'phone', 'lastName', 'email']"
     >
@@ -357,17 +423,58 @@ th.sort {
         </div>
       </div>
       <hr />
-      <div class="row items-push">
-        <div class="mb-3 col-auto ms-auto">
+      <div class="row items-push justify-content-center">
+        <div class="col-auto">
+          <div class="form-check form-block">
           <input
               type="checkbox"
               id="filterSponsors"
+              name="filterSponsors"
               v-model="showNonSponsorsOnly"
               class="form-check-input"
           />
-          <label for="filterSponsors" class="form-check-label">
+          <label for="filterSponsors" class="form-check-label" style="background-color: white">
             Show only sponsors who haven't sponsored all their designated children
           </label>
+          </div>
+        </div>
+        <div class="col-auto">
+          <div class="form-check form-block">
+            <input
+                checked
+                class="form-check-input"
+                type="checkbox"
+                id="val-received"
+                v-model="receivedFilter"
+                name="val-received"
+            />
+            <label class="form-check-label" for="val-received" style="width: 100px; background-color: white">Received</label>
+          </div>
+        </div>
+        <div class="col-auto">
+          <div class="form-check form-block">
+            <input
+                checked
+                class="form-check-input"
+                type="checkbox"
+                id="val-pending"
+                v-model="pendingFilter"
+                name="val-pending"
+            />
+            <label class="form-check-label" for="val-pending" style="width: 100px; background-color: white">Pending</label>
+          </div>
+        </div>
+        <div class="col-auto">
+          <div class="form-check form-block">
+            <input
+                class="form-check-input"
+                type="checkbox"
+                id="val-partial"
+                v-model="partialFilter"
+                name="val-partial"
+            />
+            <label class="form-check-label" for="val-partial" style="width: 100px; background-color: white">Partial</label>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -385,17 +492,19 @@ th.sort {
                   {{ th.name }} <i class="gg-select float-end"></i>
                 </th>
                 <th>Action</th>
+                <th>Gift Status</th>
               </tr>
               </thead>
               <DatasetItem tag="tbody" class="fs-sm">
                 <template #default="{ row }">
-                  <tr v-if="row" :class="row.logEntries.length > 0 ? 'red-border' : ''">
+                  <tr v-if="row" :class="getBorderColor(row)">
                     <td style="min-width: 150px"><router-link :to="{ name: 'backend-sponsors-detail', params: { id: row.id } }">
                       {{ row.firstName }} {{row.lastName}}
                     </router-link></td>
                     <td>{{ row.phone }}</td>
                     <td>{{ row.email }}</td>
                     <td>{{ row.bestTimeToCall }}</td>
+                    <td>{{row.giftCount}}</td>
                     <td>{{row.numberOfChildrenSponsored}}</td>
                     <td>{{row.childAgePreference}}</td>
                     <td>{{row.genderPreference}}</td>
@@ -408,6 +517,14 @@ th.sort {
                           <i class="fa fa-fw fa-gift"></i>
                         </button>
                       </div>
+                    </td>
+                    <td v-if="row.giftCount === 0"></td>
+                    <td v-else>
+                      <select id="giftStatus" class="form-select form-select-sm" :disabled="row.giftCount === 0" v-model="row.giftStatus" @change="updateStatus(row.id, row.giftStatus)">
+                        <option value="Pending">Pending</option>
+                        <option value="Received">Received</option>
+                        <option value="Partial">Partial</option>
+                      </select>
                     </td>
                   </tr>
                 </template>
@@ -453,7 +570,7 @@ th.sort {
             <div class="row g-4">
               <div class="col-12">
                 <label for="callDescription" class="form-label mb-0">Description</label>
-                <select id="genderPreference" class="form-select form-select-sm" v-model="logEntry.callDescription">
+                <select id="callDescription" class="form-select form-select-sm" v-model="logEntry.callDescription">
                   <option selected>None</option>
                   <option value="Left Message">Left Message</option>
                   <option value="No Answer">No Answer</option>
