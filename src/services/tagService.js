@@ -31,4 +31,10 @@ export default {
         });
     },
 
+    printRosterExcelReport(data){
+        return api.post(`/excel/reports/roster`, data, {
+            responseType: 'blob',
+        });
+    },
+
 }

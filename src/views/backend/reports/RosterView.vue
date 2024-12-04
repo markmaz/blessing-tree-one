@@ -59,6 +59,26 @@ async function printAllGiftTags() {
   }
 }
 
+async function printExcel(){
+  try{
+  const roster = {units: [], parents: filteredFamilies.value};
+  const response = await tagService.printRosterExcelReport(roster);
+  const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}));
+  const link = document.createElement('a');
+  link.href = url;
+  const date = utils.getCurrentDateTime();
+  const fileName = "roster_printed_on_" + date + ".xlsx";
+  link.setAttribute('download', fileName); // Set the file name
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link); // Clean up after download
+
+  }catch (err){
+    console.error(err);
+  }finally {
+    loading.value =false;
+  }
+}
 async function printReport(){
   loading.value = true;
 
@@ -202,6 +222,9 @@ const filteredFamilies = computed(() => {
               </div>
               <div class="col-auto">
                 <button class="btn btn-primary" @click="printReport"><i class="fa fa-fw me-1 fa-print"></i>Print Report</button>
+              </div>
+              <div class="col-auto">
+                <button class="btn btn-primary" @click="printExcel"><i class="fa fa-fw me-1 fa-file-excel"></i>Export Excel</button>
               </div>
             </div>
           </li>
