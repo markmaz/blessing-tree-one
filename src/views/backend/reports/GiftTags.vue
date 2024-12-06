@@ -1,5 +1,5 @@
 <script setup>
-import tagService from "@/services/tagService.js";
+import tagService from "@/services/reportService.js";
 import utils from "@/utility/utils.js";
 
 import {ref} from "vue";

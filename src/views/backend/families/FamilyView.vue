@@ -11,7 +11,7 @@ import {
   DatasetShow,
 } from "vue-dataset";
 import { ref, reactive, computed, onMounted } from "vue";
-import tagService from "@/services/tagService.js";
+import tagService from "@/services/reportService.js";
 import utils from "@/utility/utils.js";
 
 let families = ref([]);
