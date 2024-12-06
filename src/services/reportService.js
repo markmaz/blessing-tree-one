@@ -37,4 +37,11 @@ export default {
         });
     },
 
+    printSponsorReport(data){
+        return api.post(`/pdf/reports/sponsor`, data, {
+            responseType: 'blob',
+        });
+    },
+
+
 }

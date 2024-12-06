@@ -13,7 +13,8 @@ import {
   DatasetShow,
 } from "vue-dataset";
 import giftService from "@/services/giftService.js";
-import OptionsView from "@/views/backend/blocks/OptionsView.vue";
+import tagService from "@/services/reportService.js";
+import utils from "@/utility/utils.js";
 
 let sponsors = ref([{}]);
 let sponsorID = ref(0);
@@ -248,7 +249,7 @@ const statusFilters = computed(() => {
   if (partialFilter.value) filters.push("Partial");
 
   return filteredSponsors.value.filter((sponsor) => {
-    return filters.some((filter) => sponsor.giftStatus.includes(filter));
+      return filters.some((filter) => sponsor.giftStatus.includes(filter))
   });
 });
 
@@ -298,6 +299,30 @@ async function updateStatus(sponsorID, status){
     console.log(response.data);
   }catch(err){
     console.error(err);
+  }
+}
+
+async function printSponsorReport() {
+  try {
+    loading.value = true
+
+    const sponsorDTO = statusFilters.value.map(({ giftCount, ...data }) => data);
+    console.log(sponsorDTO);
+
+    const response = await tagService.printSponsorReport(sponsorDTO);
+    const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}));
+    const link = document.createElement('a');
+    link.href = url;
+    const date = utils.getCurrentDateTime();
+    const fileName = "sponsors_" + date + ".pdf";
+    link.setAttribute('download', fileName); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up after download
+  } catch (err) {
+    console.error(err);
+  }finally {
+    loading.value = false;
   }
 }
 </script>
@@ -395,9 +420,14 @@ th.sort {
         <ol class="breadcrumb breadcrumb-alt">
 
           <li class="breadcrumb-item">
-            <a class="link-fx " href="javascript:void(0)">
-              <span class="fa fa-medal fa-2x"></span>
-            </a>
+            <div class="row g-2">
+              <div class="col-auto">
+                <button class="btn btn-primary" @click="printSponsorReport"><i class="fa fa-fw me-1 fa-print"></i>Print Report</button>
+              </div>
+<!--              <div class="col-auto">-->
+<!--                <button class="btn btn-primary" @click="printExcel"><i class="fa fa-fw me-1 fa-file-excel"></i>Export Excel</button>-->
+<!--              </div>-->
+            </div>
           </li>
         </ol>
       </nav>

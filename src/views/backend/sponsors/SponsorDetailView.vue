@@ -5,7 +5,7 @@ import sponsorService from "@/services/sponsorService.js";
 import giftService from "@/services/giftService.js";
 import router from "@/router/index.js";
 import GiftSearchComponent from "@/components/GiftSearchComponent.vue";
-import tagService from "@/services/tagService.js";
+import tagService from "@/services/reportService.js";
 import utils from "@/utility/utils.js";
 
 const route = useRoute();

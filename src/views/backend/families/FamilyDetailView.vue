@@ -3,7 +3,7 @@ import {useRoute} from "vue-router";
 import {onMounted, ref} from "vue";
 import familyService from "@/services/familyService.js";
 import router from "@/router/index.js";
-import tagService from "@/services/tagService.js";
+import tagService from "@/services/reportService.js";
 import utils from "@/utility/utils.js";
 import giftService from "@/services/giftService.js";
 import SponsorSearchComponent from "@/components/SponsorSearchComponent.vue";

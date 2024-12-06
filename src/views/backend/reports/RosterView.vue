@@ -2,7 +2,7 @@
 import familyService from "@/services/familyService.js";
 import utils from "@/utility/utils.js";
 import {computed, onMounted, ref} from "vue";
-import tagService from "@/services/tagService.js";
+import tagService from "@/services/reportService.js";
 import SponsorSearchComponent from "@/components/SponsorSearchComponent.vue";
 import giftService from "@/services/giftService.js";
 
