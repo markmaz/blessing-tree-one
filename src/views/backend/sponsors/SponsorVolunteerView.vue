@@ -248,9 +248,14 @@ const statusFilters = computed(() => {
   if (receivedFilter.value) filters.push("Received");
   if (partialFilter.value) filters.push("Partial");
 
-  return filteredSponsors.value.filter((sponsor) => {
+  if(filters.length > 0){
+    return filteredSponsors.value.filter((sponsor) => {
       return filters.some((filter) => sponsor.giftStatus.includes(filter))
-  });
+    });
+  }else {
+    return filteredSponsors.value;
+  }
+
 });
 
 onMounted(() => {
