@@ -6,7 +6,8 @@ import GiftWidget from "@/components/GIftWidget.vue";
 import SponsorWidget from "@/components/SponsorWidget.vue";
 import TopTenWidget from "@/components/TopTenWidget.vue";
 import ChildWidget from "@/components/ChildWidget.vue";
-
+import GiftStatusWidget from "@/components/GiftStatusWidget.vue";
+import OutstandingGiftsWidget from "@/components/OutstandingGiftsWidget.vue";
 // vue-chartjs, for more info and examples you can check out https://vue-chartjs.org/ and http://www.chartjs.org/docs/ -->
 import { Line, Bar } from "vue-chartjs";
 import { Chart, registerables } from "chart.js";
@@ -72,6 +73,16 @@ const {login, logout, username, isAuthenticated, name, title} = userStore;
         <!-- Gifts -->
         <gift-widget/>
         <!-- END Gifts-->
+      </div>
+      <div class="col-sm-6 col-xxl-3">
+        <!-- Gifts Status -->
+        <gift-status-widget/>
+        <!-- END Gifts Status-->
+      </div>
+      <div class="col-sm-6 col-xxl-3">
+        <!-- Gifts Status -->
+        <outstanding-gifts-widget/>
+        <!-- END Gifts Status-->
       </div>
     </div>
     <!-- END Overview -->

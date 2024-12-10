@@ -35,5 +35,9 @@ export default {
 
     updateGiftStatus(id, status){
         return api.post(`/sponsors/${id}/giftStatus/${status}`);
-    }
+    },
+
+    getGiftStatusCount(){
+        return api.get(`/sponsors/giftStatus/count`);
+    },
 };

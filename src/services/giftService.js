@@ -23,5 +23,9 @@ export default {
 
     unSponsorGift(giftID, sponsorID){
         return api.delete(`/gifts/${giftID}/sponsors/${sponsorID}`);
+    },
+
+    outstandingCount(){
+        return api.get(`/gifts/outstanding/count`);
     }
 };
