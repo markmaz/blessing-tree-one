@@ -39,6 +39,24 @@ async function saveSponsor() {
     await fetch();
   }
 }
+async function printIndividualGiftTag(btid, name, gender, age){
+  const data = {id: btid, age: age, gender: gender, name: name};
+  try {
+    const response = await tagService.printIndividualTag(data);
+    const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}));
+    const link = document.createElement('a');
+    link.href = url;
+    const date = utils.getCurrentDateTime();
+    const fileName = btid + "_giftTags_printed_on_" + date + ".pdf";
+    link.setAttribute('download', fileName); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up after download
+  } catch (err) {
+    console.error(err);
+  }finally {
+  }
+}
 async function printAllGiftTags() {
   try {
     loading.value = true
@@ -363,7 +381,15 @@ const filteredFamilies = computed(() => {
                 <button class="btn btn-primary" v-else @click="openSponsorModal(gift.id)">Find Sponsor</button>
             </td>
             <td :class="childIndex % 2 > 0 ? 'bg-light' : ''">{{gift?.sponsor?.phone}}</td>
-            <td></td>
+            <td>
+              <div class="justify-content-end">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-alt-secondary" @click="printIndividualGiftTag(parent.btid, child.name, child.gender,child.age)">
+                    <i class="fa fa-fw fa-print"></i>
+                  </button>
+                </div>
+              </div>
+            </td>
           </tr>
         </template>
         <tr style="background-color: #2A363B"><td colspan="11" style="background-color: #2A363B"></td> </tr>
