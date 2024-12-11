@@ -43,5 +43,9 @@ export default {
         });
     },
 
-
+    printIndividualTag(data){
+        return api.post(`/pdf/giftTags`, data, {
+            responseType: 'blob',
+        });
+    },
 }

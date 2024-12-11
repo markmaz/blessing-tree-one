@@ -41,6 +41,25 @@ async function printGiftTags(){
     console.error(err);
   }
 }
+
+async function printIndividualGiftTag(btid, name, gender, age){
+  const data = {id: btid, age: age, gender: gender, name: name};
+  try {
+    const response = await tagService.printIndividualTag(data);
+    const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}));
+    const link = document.createElement('a');
+    link.href = url;
+    const date = utils.getCurrentDateTime();
+    const fileName = btid + "_giftTags_printed_on_" + date + ".pdf";
+    link.setAttribute('download', fileName); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up after download
+  } catch (err) {
+    console.error(err);
+  }finally {
+  }
+}
 function addGift(value){
   const val = selectedGifts.value.indexOf(value);
 
@@ -381,6 +400,9 @@ onMounted(() => {
                   <div class="btn-group">
                     <button type="button" class="btn btn-sm btn-alt-secondary" @click="showRemoveGiftModel(gift.id)">
                       <i class="fa fa-fw fa-times"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-alt-secondary" @click="printIndividualGiftTag(gift.child.parent.btid, gift.child.name, gift.child.gender, gift.child.age)">
+                      <i class="fa fa-fw fa-print"></i>
                     </button>
                   </div>
                 </td>
