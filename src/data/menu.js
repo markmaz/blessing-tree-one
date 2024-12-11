@@ -52,6 +52,10 @@ export default {
           to: "backend-reports-unsponsored",
         },
         {
+          name: "Sponsor Responsibility",
+          to: "backend-reports-sponsor",
+        },
+        {
           name: "Gift Tags",
           to: "backend-reports-giftTags",
         },

@@ -19,8 +19,9 @@ const FamilyView = () => import("@/views/backend/families/FamilyView.vue");
 const FamilyDetailView = () => import("@/views/backend/families/FamilyDetailView.vue");
 
 const SponsorView = () => import("@/views/backend/sponsors/SponsorView.vue");
-const SponsorDetailView = () => import("@/views/backend/sponsors/SponsorDetailView.vue")
-const SponsorVolunteerView = () => import("@/views/backend/sponsors/SponsorVolunteerView.vue")
+const SponsorDetailView = () => import("@/views/backend/sponsors/SponsorDetailView.vue");
+const SponsorVolunteerView = () => import("@/views/backend/sponsors/SponsorVolunteerView.vue");
+const SponsorResponsibilityView = () => import("@/views/backend/sponsors/SponsorResponsibilityView.vue");
 const SeniorView = () => import("@/views/backend/seniors/SeniorsView.vue");
 const GiftView = () => import("@/views/backend/gifts/GiftsView.vue");
 const ReportView = () => import("@/views/backend/reports/ReportsView.vue");
@@ -160,6 +161,12 @@ const routes = [
         path: "reports/unsponsored",
         name: "backend-reports-unsponsored",
         component: UnsponsoredChildReport,
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "reports/sponsor_responsibility",
+        name: "backend-reports-sponsor",
+        component: SponsorResponsibilityView,
         meta: { requiresAuth: true },
       },
       {
