@@ -56,6 +56,10 @@ export default {
           to: "backend-reports-sponsor",
         },
         {
+          name: "Sponsor Roster",
+          to: "backend-reports-sponsor-roster",
+        },
+        {
           name: "Gift Tags",
           to: "backend-reports-giftTags",
         },

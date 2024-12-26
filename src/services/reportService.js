@@ -48,4 +48,10 @@ export default {
             responseType: 'blob',
         });
     },
+
+    printSponsorRosterReport(data){
+        return api.post(`/pdf/reports/sponsor/roster`, data, {
+            responseType: 'blob',
+        });
+    },
 }
