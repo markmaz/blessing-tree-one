@@ -60,8 +60,8 @@ async function removeSponsor(){
   }catch (err){
     console.warn(err);
   }finally {
-    await fetchSponsors();
     deleteSponsorModal.value.hide();
+    await fetchSponsors();
   }
 }
 
@@ -296,7 +296,7 @@ th.sort {
             <table class="table table-striped mb-0">
               <thead>
               <tr>
-                <th scope="col">ID</th>
+                <th scope="col">Status</th>
                 <th
                     v-for="(th, index) in cols"
                     :key="th.field"
@@ -323,7 +323,7 @@ th.sort {
                     <td>{{ row.phone }}</td>
                     <td>{{ row.email }}</td>
                     <td>{{ row.bestTimeToCall }}</td>
-                    <td class="text-center">
+                    <td v-if="row.active" class="text-center">
                       <div class="btn-group">
                         <button type="button" class="btn btn-sm btn-alt-secondary" @click="openDetails(row.id)">
                           <i class="fa fa-fw fa-pencil-alt"></i>
@@ -333,6 +333,7 @@ th.sort {
                         </button>
                       </div>
                     </td>
+                    <td class="text-center" v-else></td>
                   </tr>
                 </template>
               </DatasetItem>
