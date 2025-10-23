@@ -135,6 +135,7 @@ async function updateChild(index){
 async function saveFamily(){
   if (family.value.id == null){
     try{
+      family.value.active = true;
       const response = await familyService.createFamily(family.value);
       family.value = response.data;
     }catch (err){
