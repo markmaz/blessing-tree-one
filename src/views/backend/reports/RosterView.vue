@@ -164,6 +164,10 @@ let btFilter = ref(true);
 let fcFilter = ref(true);
 let hbFilter = ref(true);
 let oakFilter = ref(true);
+let chFilter = ref(true);
+let focFilter = ref(true);
+let ghFilter = ref(true);
+
 let unsponsoredFilter = ref(false);
 
 const filterGifts = computed(() => {
@@ -185,6 +189,9 @@ const filteredFamilies = computed(() => {
     if (btFilter.value) filters.push("BT");
     if (fcFilter.value) filters.push("FC");
     if (hbFilter.value) filters.push("HB");
+    if (chFilter.value) filters.push("CH");
+    if (focFilter.value) filters.push("FOC");
+    if (ghFilter.value) filters.push("GH");
     if (oakFilter.value) {
       filters.push("OAK");
       filters.push("Oak")
@@ -314,6 +321,42 @@ const filteredFamilies = computed(() => {
             v-model="oakFilter"
         />
         <label class="form-check-label" for="val-oak" style="width: 100px; background-color: white">OAK</label>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="form-check form-block">
+          <input
+              checked
+              class="form-check-input"
+              type="checkbox"
+              id="val-foc"
+              v-model="focFilter"
+          />
+          <label class="form-check-label" for="val-foc" style="width: 100px; background-color: white">FOC</label>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="form-check form-block">
+          <input
+              checked
+              class="form-check-input"
+              type="checkbox"
+              id="val-gh"
+              v-model="ghFilter"
+          />
+          <label class="form-check-label" for="val-gh" style="width: 100px; background-color: white">GH</label>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="form-check form-block">
+          <input
+              checked
+              class="form-check-input"
+              type="checkbox"
+              id="val-ch"
+              v-model="chFilter"
+          />
+          <label class="form-check-label" for="val-ch" style="width: 100px; background-color: white">CH</label>
         </div>
       </div>
       <div class="col-auto">

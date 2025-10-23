@@ -151,6 +151,23 @@ async function fetchSponsors() {
   }
 }
 
+const showActive   = ref(true)
+const showInactive = ref(false)
+
+const filteredSponsors = computed(() => {
+  // if neither active nor inactive is selected, show nothing (or return families.value to show all)
+  if (!showActive.value && !showInactive.value) return []
+
+  let out = sponsors.value.filter(s => {
+    const statusMatch =
+        (showActive.value && s.active === true) ||
+        (showInactive.value && s.active === false)
+    return statusMatch;
+  })
+
+  return out;
+})
+
 onMounted(() => {
   if(!loading.value){
     // Remove labels from
@@ -275,9 +292,38 @@ th.sort {
     <div class="spinner"></div>
   </div>
   <div class="content"  v-if="!loading">
+    <div class="row g-3 pb-3 justify-content-center">
+      <div class="col-auto">
+        <div class="form-check form-block">
+          <input
+              class="form-check-input"
+              type="checkbox"
+              id="filter-active"
+              v-model="showActive"
+          />
+          <label class="form-check-label" for="filter-active" style="width: 100px; background-color: white">
+            Active
+          </label>
+        </div>
+      </div>
+
+      <div class="col-auto">
+        <div class="form-check form-block">
+          <input
+              class="form-check-input"
+              type="checkbox"
+              id="filter-inactive"
+              v-model="showInactive"
+          />
+          <label class="form-check-label" for="filter-inactive" style="width: 100px; background-color: white">
+            Inactive
+          </label>
+        </div>
+      </div>
+    </div>
     <Dataset
         v-slot="{ ds }"
-        :ds-data="sponsors"
+        :ds-data="filteredSponsors"
         :ds-sortby="sortBy"
         :ds-search-in="['firstName', 'phone', 'lastName', 'email']"
     >
