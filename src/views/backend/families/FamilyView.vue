@@ -13,6 +13,7 @@ import {
 import { ref, reactive, computed, onMounted } from "vue";
 import tagService from "@/services/reportService.js";
 import utils from "@/utility/utils.js";
+import sponsorService from "@/services/sponsorService.js";
 
 let families = ref([]);
 let familyID = ref(0);
@@ -144,10 +145,19 @@ function openDetails(id){
   console.log(familyID.value)
   router.push({name:'backend-families-details', params:{id: id}});
 }
+
+function getBorderColor(isActive){
+  if (isActive){
+    return "green-border";
+  }else{
+    return "red-border";
+  }
+}
+
 async function fetchParents() {
   try {
     loading.value = true;
-    const response = await familyService.getFamilies();
+    const response = await familyService.getAllFamilies();
     families.value = response.data; // Adjust this based on your API response structure
     console.log(families)
   } catch (err) {
@@ -173,6 +183,17 @@ async function removeFamily(){
   }finally {
     await fetchParents();
   }
+}
+
+async function onArchiveChange(e, row) {
+  try{
+    await familyService.updateFamily(row.id, row);
+  }catch (err){
+    console.warn(err);
+  }finally {
+    //await fetchParents();
+  }
+
 }
 
 onMounted(() => {
@@ -258,6 +279,16 @@ th.sort {
   animation: spin 1s linear infinite;
 }
 
+.red-border {
+  border-left: 3px solid lightcoral !important;
+  border-right: 3px solid lightcoral !important;
+}
+
+.green-border {
+  border-left: 3px solid lightgreen !important;
+  border-right: 3px solid lightgreen !important;
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -316,6 +347,7 @@ th.sort {
             <table class="table table-striped mb-0">
               <thead>
               <tr>
+                <th>Status</th>
                 <th
                     v-for="(th, index) in cols"
                     :key="th.field"
@@ -329,15 +361,22 @@ th.sort {
               </thead>
               <DatasetItem tag="tbody" class="fs-sm">
                 <template #default="{ row }">
-                  <tr v-if="row">
-                    <th scope="row">{{ row.btid }}</th>
+                  <tr v-if="row" :class="getBorderColor(row.active)">
+                    <td style="min-width: 150px">
+                      <select id="is_archive" class="form-select form-select-sm"  v-model="row.active"
+                              @change="onArchiveChange($event, row)">
+                        <option :value="false">Inactive</option>
+                        <option :value="true">Active</option>
+                      </select>
+                    </td>
+                    <td>{{ row.btid }}</td>
                     <td style="min-width: 150px">{{ row.firstName }}</td>
                     <td style="min-width: 150px">{{ row.lastName }}</td>
                     <td>{{ row.primaryPhone }}</td>
                     <td>{{ row.secondaryPhone }}</td>
                     <td>{{ row.mhid }}</td>
                     <td>{{ row.children ? row.children.length : 0 }}</td>
-                    <td class="text-center">
+                    <td class="text-center" v-if="row.active">
                       <div class="btn-group">
                         <button type="button" class="btn btn-sm btn-alt-secondary" @click="openDetails(row.id)">
                           <i class="fa fa-fw fa-pencil-alt"></i>
@@ -350,6 +389,7 @@ th.sort {
                         </button>
                       </div>
                     </td>
+                    <td class="text-center" v-else></td>
                   </tr>
                 </template>
               </DatasetItem>
