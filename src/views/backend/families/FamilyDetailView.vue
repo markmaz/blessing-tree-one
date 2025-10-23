@@ -227,6 +227,7 @@ async function addChild(){
     age: age.value,
     gender: gender.value,
     name: "Child " + (family.value.children.length + 1),
+    active: true,
     gifts:[],
   };
 

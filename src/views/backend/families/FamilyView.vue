@@ -196,6 +196,24 @@ async function onArchiveChange(e, row) {
 
 }
 
+const showActive   = ref(true)
+const showInactive = ref(false)
+
+const filteredFamilies = computed(() => {
+  // if neither active nor inactive is selected, show nothing (or return families.value to show all)
+  if (!showActive.value && !showInactive.value) return []
+
+  let out = families.value.filter(f => {
+    const statusMatch =
+        (showActive.value && f.active === true) ||
+        (showInactive.value && f.active === false)
+    return statusMatch
+  })
+
+  return out
+})
+
+
 onMounted(() => {
   // Remove labels from
   document.querySelectorAll("#datasetLength label").forEach((el) => {
@@ -321,9 +339,38 @@ th.sort {
     <div class="spinner"></div>
   </div>
   <div class="content"  v-if="!loading">
+    <div class="row g-3 pb-3 justify-content-center">
+      <div class="col-auto">
+        <div class="form-check form-block">
+          <input
+              class="form-check-input"
+              type="checkbox"
+              id="filter-active"
+              v-model="showActive"
+          />
+          <label class="form-check-label" for="filter-active" style="width: 100px; background-color: white">
+            Active
+          </label>
+        </div>
+      </div>
+
+      <div class="col-auto">
+        <div class="form-check form-block">
+          <input
+              class="form-check-input"
+              type="checkbox"
+              id="filter-inactive"
+              v-model="showInactive"
+          />
+          <label class="form-check-label" for="filter-inactive" style="width: 100px; background-color: white">
+            Inactive
+          </label>
+        </div>
+      </div>
+    </div>
     <Dataset
         v-slot="{ ds }"
-        :ds-data="families"
+        :ds-data="filteredFamilies"
         :ds-sortby="sortBy"
         :ds-search-in="['firstName', 'primaryPhone', 'lastName', 'btid', 'mhid']"
     >
