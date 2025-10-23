@@ -65,6 +65,22 @@ async function removeSponsor(){
   }
 }
 
+function toArchiveValue(v) {
+  return (v === 1 || v === true) ? 1 : 0;   // null/0/false => 0 (Active)
+}
+async function onArchiveChange(e, row) {
+  //row.active = Number(e.target.value) === 1 ? 1 : 0;
+
+  try{
+    await sponsorService.updateSponsor(row.id, row);
+  }catch (err){
+    console.warn(err);
+  }finally {
+    await fetchSponsors();
+  }
+
+}
+
 const sortBy = computed(() => {
   return cols.reduce((acc, o) => {
     if (o.sort) {
@@ -109,6 +125,14 @@ function onSort(event, i) {
   }
 }
 
+function getBorderColor(isActive){
+  if (isActive){
+    return "green-border";
+  }else{
+    return "red-border";
+  }
+}
+
 function openDetails(id){
   sponsorID.value = id;
   console.log("Sponsor:" + sponsorID.value)
@@ -117,7 +141,7 @@ function openDetails(id){
 async function fetchSponsors() {
   try {
     loading.value =true;
-    const response = await sponsorService.getSponsors();
+    const response = await sponsorService.getAllSponsors();
     sponsors.value = response.data; // Adjust this based on your API response structure
     console.log(sponsors.value)
   } catch (err) {
@@ -146,6 +170,7 @@ onMounted(() => {
   fetchSponsors()
   console.log("sponsors:" + sponsors.value)
 });
+
 </script>
 <style lang="scss" scoped>
 .gg-select {
@@ -207,6 +232,16 @@ th.sort {
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;
+}
+
+.red-border {
+  border-left: 3px solid lightcoral !important;
+  border-right: 3px solid lightcoral !important;
+}
+
+.green-border {
+  border-left: 3px solid lightgreen !important;
+  border-right: 3px solid lightgreen !important;
 }
 
 @keyframes spin {
@@ -275,8 +310,14 @@ th.sort {
               </thead>
               <DatasetItem tag="tbody" class="fs-sm">
                 <template #default="{ row }">
-                  <tr v-if="row">
-                    <th scope="row">{{ row.id }}</th>
+                  <tr v-if="row" :class="getBorderColor(row.active)">
+                    <td style="min-width: 150px">
+                      <select id="is_archive" class="form-select form-select-sm"  v-model="row.active"
+                              @change="onArchiveChange($event, row)">
+                        <option :value="false">Inactive</option>
+                        <option :value="true">Active</option>
+                      </select>
+                    </td>
                     <td style="min-width: 150px">{{ row.firstName }}</td>
                     <td style="min-width: 150px">{{ row.lastName }}</td>
                     <td>{{ row.phone }}</td>

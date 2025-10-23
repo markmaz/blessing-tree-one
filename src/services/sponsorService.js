@@ -2,6 +2,10 @@ import api from '@/services/api';
 
 export default {
     getSponsors() {
+        return api.get(`/sponsors/active`);
+    },
+
+    getAllSponsors(){
         return api.get(`/sponsors`);
     },
 

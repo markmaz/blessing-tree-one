@@ -2,6 +2,10 @@ import api from '@/services/api';
 
 export default {
     getFamilies() {
+        return api.get('/parents/active'); // "/users" is the API endpoint
+    },
+
+    getAllFamilies(){
         return api.get('/parents'); // "/users" is the API endpoint
     },
 
