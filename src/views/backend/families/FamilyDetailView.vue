@@ -173,11 +173,10 @@ function openEditGift(giftIndex, childIndex){
 }
 
 async function saveGift(){
-  console.log("gift index: " + currentGiftIndex.value);
-
   if(currentGiftIndex.value == null){
     try{
       const child_id = family.value.children[currentChildID.value].id;
+      gift.value.active = true;
       await familyService.addGift(family.value.id, child_id, gift.value);
     }catch (err){
       console.warn(err);
@@ -577,7 +576,7 @@ html.theme-flat .child-header.gender-other {
               />
             </div>
             <div class="mb-4">
-              <label class="form-label" for="val-size">Size <span class="text-danger">*</span></label>
+              <label class="form-label" for="val-size">Size</label>
               <input
                   type="text"
                   id="val-size"
