@@ -136,6 +136,7 @@ async function saveSponsor(){
   if(sponsorID.value == null){
     try{
       sponsor.value.active = true;
+      sponsor.value.giftStatus = "Pending";
       const response = await sponsorService.createSponsor(sponsor.value);
       sponsor.value = response.data;
     }catch (err){
