@@ -416,7 +416,10 @@ const filteredFamilies = computed(() => {
             <td></td>
             <td></td>
             <td :class="childIndex % 2 > 0 ? 'bg-light' : ''">{{child.name}}-{{child.age}}{{child.gender}}</td>
-            <td :class="childIndex % 2 > 0 ? 'bg-light' : ''">{{gift.description}}</td>
+            <td :class="childIndex % 2 > 0 ? 'bg-light' : ''">
+              {{ gift.description }}
+              <span v-if="gift.size"> / {{ gift.size }}</span>
+            </td>
             <td :class="childIndex % 2 > 0 ? 'bg-light' : ''">
                 <router-link :to="{ name: 'backend-sponsors-detail', params: { id:  gift.sponsor.id} }" v-if="gift.sponsor">
                   {{gift?.sponsor?.firstName}} {{gift?.sponsor?.lastName}}
